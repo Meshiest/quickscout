@@ -1,0 +1,21 @@
+CACHE MANIFEST
+/jquery.min.js
+/angular.min.js
+/angular-route.min.js
+/angular-cookies.min.js
+/app.js
+/style.css
+/halffield.png
+/
+/tab_pit.html
+/tab_match.html
+/tab_data.html
+/tab_events.html
+
+FALLBACK:
+/_online.html /_offline.html
+
+NETWORK:
+/events
+/match
+/api/events

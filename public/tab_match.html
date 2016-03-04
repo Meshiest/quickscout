@@ -1,0 +1,208 @@
+<h1>{{matches[currMatch].join(' Team ')}}</h1>
+<h2 ng-if="scoutedMatches[matches[currMatch][0]]=='s'">Uploaded</h2>
+
+<button ng-click='saveMatch()'>Save</button>
+<button ng-click='setCurrMatch(currMatch+1)'>Next Match</button>
+<button ng-click='clearMatch(currMatch)'>Clear Match</button>
+
+
+<h3>Defenses Picked</h3>
+
+<div class='scoutdivider'>
+  <section>
+    <article ng-repeat='i in [1,2,3,4,5]'>
+      <label for='d_defense{{i}}'>Defense {{i}}</label>
+      <select ng-model='scout.defenses[i]' id='d_defense{{i}}'>
+        <option value='false' selected="selected">None</option>
+        <option value='port'>Porticullis</option>
+        <option value='cheval'>Cheval de Frise</option>
+        <option value='ramp'>Ramparts</option>
+        <option value='moat'>Moat</option>
+        <option value='sally'>Sally Port</option>
+        <option value='rock'>Rock Wall</option>
+        <option value='rough'>Rough Terrain</option>
+        <option value='low'>Low Bar</option>
+      </select>
+    </article>
+  </section>
+  <section>
+    <img src='halffield.png' style='width: 100px; height: auto;' />
+  </section>
+</div>
+
+<hr/>
+
+<h3>Autonomous</h3>
+
+<div class='scoutdivider'>
+  <section>
+    <input type='checkbox' ng-model='scout.auto.ball' id='startball'/>
+    <label for='startball'>Starts with Ball</label><br/>
+
+    <input type='checkbox' ng-model='scout.auto.spy' id='autospy'/>
+    <label for='autospy'>Spy</label><br/>
+
+    <label for='defense'>Reached Defense</label><br/>
+    <select ng-model='scout.auto.defense' id='defense'>
+      <option value='false' selected="selected">None</option>
+      <option value='port'>Porticullis</option>
+      <option value='cheval'>Cheval de Frise</option>
+      <option value='ramp'>Ramparts</option>
+      <option value='moat'>Moat</option>
+      <option value='sally'>Sally Port</option>
+      <option value='rock'>Rock Wall</option>
+      <option value='rough'>Rough Terrain</option>
+      <option value='low'>Low Bar</option>
+    </select>
+  </section>
+  <section style='float: right; width: 50%; height: 100%;'>
+    <textarea style="width: 100%; height: 100%; box-sizing: border-box;" placeholder='Auto Comments'></textarea>
+  </section>
+</div>
+
+<hr/>
+
+<h3>Teleoperated</h3>
+
+<div class='scoutdivider'>
+  <section>
+    <table>
+      <tr ng-repeat='i in [1,2,3,4,5]'>
+        <td class='label'><span ng-if='!scout.defenses[i]'>Defense {{i}}</span>{{scout.defenses[i]}}</td>
+        <td>
+          <input type='number' min='0' id='t_defense{{i}}' ng-model='scout.tele.defense[i]'/>
+        </td>
+        <td>
+          <label for='t_cdefense{{i}}'>Stuck</label>
+          <input type='checkbox' id='t_cdefense{{i}}' ng-model='scout.tele.defense_stuck[i]'></td>
+        </td>
+      </tr>
+    </table>
+  </section>
+  <section>
+  </section>
+</div>
+
+
+<div class='scoutdivider'>
+  <section>
+    <canvas id='fieldcanvas' style='width: 200px; height: 200px;'
+      onclick='renderTouch(event)'
+      ng-click='imageClick($event)'>
+    </canvas>
+  </section>
+  <section style='display: inline-block; float: right;'>
+    <div style='text-align: center; '>
+      <button ng-click="addShot('high')">Hi</button>
+      <button ng-click="addShot('low')">Lo</button>
+      <button ng-click="addShot('hmiss')">HMiss</button>
+      <button ng-click="addShot('lmiss')">LMiss</button>
+    </div>
+    Shots
+    <div style='height: 150px; overflow-y: auto; overflow-x: hidden; background: #fff;'>
+      <table>
+        <tr ng-repeat='(i, shot) in scout.tele.shots'>
+          <td>{{shot.goal}}</td>
+          <td>{{shot.x}},{{shot.y}}</td>
+          <td><button ng-click='removeShot(i)'>&cross;</button></td>
+        </tr>
+      </table>
+    </div>
+  </section>
+</div>
+
+<hr/>
+
+<h3>Ball</h3>
+
+<div class='scoutdivider'>
+  <section>
+    <input type='checkbox' ng-model='scout.ball.secret' id='secretball'/>
+    <label for='secretball'>Secret</label><br/>
+
+    <input type='checkbox' ng-model='scout.ball.courtyard' id='courtyardball'/>
+    <label for='courtyardball'>Courtyard</label><br/>
+
+    <input type='checkbox' ng-model='scout.ball.neutral' id='neutralball'/>
+    <label for='neutralball'>Neutral</label><br/>
+
+    <input type='checkbox' ng-model='scout.ball.steal' id='stealball'/>
+    <label for='stealball'>Steal</label><br/>
+
+    <input type='checkbox' ng-model='scout.ball.block' id='blockball'/>
+    <label for='blockball'>Can Block</label><br/>
+
+    <input type='checkbox' ng-model='scout.ball.push' id='pushball'/>
+    <label for='pushball'>Can Push</label><br/>
+
+    <input type='checkbox' ng-model='scout.ball.pickup' id='pickupball'/>
+    <label for='pickupball'>Can Pickup</label><br/>
+
+    <input type='checkbox' ng-model='scout.ball.fast' id='fastball'/>
+    <label for='fastball'>Fast</label><br/>
+
+  </section>
+</div>
+
+<hr/>
+
+<h3>Other</h3>
+
+<div class='scoutdivider'>
+  <section>
+    <input type='checkbox' ng-model='scout.other.penalty' id='penaltyother'/>
+    <label for='penaltyother'>Penalty</label><br/>
+
+    <input type='checkbox' ng-model='scout.other.breach' id='breachother'/>
+    <label for='breachother'>Breach</label><br/>
+
+    <input type='checkbox' ng-model='scout.other.capture' id='captureother'/>
+    <label for='captureother'>Capture</label><br/>
+
+    <input type='checkbox' ng-model='scout.other.defend' id='defendother'/>
+    <label for='defendother'>Was Defended Against</label><br/>
+
+
+    <input type='checkbox' ng-model='scout.other.defender' id='defenderother'/>
+    <label for='defenderother'>Was a Defender</label><br/>
+
+
+    Scale<br/>
+    <input type='radio' ng-model='scout.other.scalepos' value='left' id='scaleleft'/>
+    <label for='scaleleft'>Left</label><br/>
+    <input type='radio' ng-model='scout.other.scalepos' value='center' id='scalecenter'/>
+    <label for='scalecenter'>Center</label><br/>
+    <input type='radio' ng-model='scout.other.scalepos' value='right' id='scaleright'/>
+    <label for='scaleright'>Right</label><br/>
+
+    <input type='checkbox' ng-model='scout.other.scalelift' id='scalelift'/>
+    <label for='scalelift'>Scale Lift</label><br/>
+    
+  </section>
+</div>
+
+<script>
+var canvas = $('#fieldcanvas')
+var ctx = canvas[0].getContext('2d')
+ctx.canvas.width = ctx.canvas.height = 200
+var img = $('#halffieldimg')[0]
+
+function renderTouch(event) {
+  ctx.drawImage(img, 0, 0, 200, 200);
+  if(event) {
+    var x = (event.pageX-canvas.offset().left)
+    var y = (event.pageY-canvas.offset().top)
+    ctx.fillStyle='rgba(255, 255, 255, 0.3)'
+    ctx.strokeStyle='#000'
+    ctx.lineWidth=5
+    ctx.beginPath()
+    ctx.arc(x, y, 10, 0, 6.29)
+    ctx.fill()
+    ctx.stroke()
+    console.log(x, y)
+  }
+}
+renderTouch();
+
+</script>
+

@@ -1,0 +1,103 @@
+<h1>Team {{pitQueue[currTeam]}}</h1>
+<h2 ng-if="scoutedTeams[pitQueue[currTeam]]=='s'">Uploaded</h2>
+<button ng-click='saveTeam()'>Save</button>
+<button ng-click='setCurrTeam(currTeam-1)'>Prev Team</button>
+<button ng-click='setCurrTeam(currTeam+1)'>Next Team</button>
+<button ng-click='clearTeam(currTeam)'>Clear Team</button>
+
+<h3>Main/Robot</h3>
+<table>
+  <tr>
+    <td class='label'>Team Number</td>
+    <td>
+      <input type='number' ng-model='scout.main.teamNumber' placeholder='Team Number'/>
+    </td>
+  </tr>
+  <tr>
+    <td class='label'>Team Name</td>
+    <td>
+      <input type='text' ng-model='scout.main.teamName' placeholder='Team Name'/>
+    </td>
+  </tr>
+  <tr>
+    <td class='label'>Drive Type</td>
+    <td>
+      <select ng-model='scout.main.driveType'>
+        <option value='tank'>Tank</option>
+        <option value='mecanum'>Mecanum</option>
+        <option value='swerve'>Swerve</option>
+        <option value='holo'>Holonomical</option>
+        <option value='other'>Other</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td class='label'>Wheel Type</td>
+    <td>
+      <select ng-model='scout.main.wheelType'>
+        <option value='tread'>Tread</option>
+        <option value='solid'>Solid</option>
+        <option value='air'>Air</option>
+        <option value='mecanum'>Mecanum</option>
+        <option value='other'>Other</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td class='label'>Wheel Number</td>
+    <td>
+      <input type='number' ng-model='scout.main.wheelNum' placeholder='Wheel Number'/>
+    </td>
+  </tr>
+  <tr>
+    <td class='label'>CIM Number</td>
+    <td>
+      <input type='number' ng-model='scout.main.cimNum' placeholder='CIM Number'/>
+    </td>
+  </tr>
+  <tr>
+    <td class='label'>Max Speed</td>
+    <td>
+      <select ng-model='scout.main.speed'>
+        <option value='immobile'>Immobile</option>
+        <option value='slow'>Slow</option>
+        <option value='medium'>Medium</option>
+        <option value='fast'>Fast</option>
+        <option value='ninja'>Ninja</option>
+      </select>
+    </td>
+  </tr>
+</table>
+
+<textarea ng-model='scout.main.comment' placeholder='Comment on Robot'>
+</textarea>
+
+<h3>Teleoperated</h3>
+
+<h3>Autonomous</h3>
+
+<h3>Abilities</h3>
+
+<input type='checkbox' id='abil_port' ng-model='scout.abilities.port'/>
+<label for='abil_port'>Porticullis</label><br/>
+
+<input type='checkbox' id='abil_cheval' ng-model='scout.abilities.cheval'/>
+<label for='abil_cheval'>Cheval de Frise</label><br/>
+
+<input type='checkbox' id='abil_ramp' ng-model='scout.abilities.ramp'/>
+<label for='abil_ramp'>Ramparts</label><br/>
+
+<input type='checkbox' id='abil_moat' ng-model='scout.abilities.moat'/>
+<label for='abil_moat'>Moat</label><br/>
+
+<input type='checkbox' id='abil_sally' ng-model='scout.abilities.sally'/>
+<label for='abil_sally'>Sally Port</label><br/>
+
+<input type='checkbox' id='abil_rock' ng-model='scout.abilities.rock'/>
+<label for='abil_rock'>Rock Wall</label><br/>
+
+<input type='checkbox' id='abil_rough' ng-model='scout.abilities.rough'/>
+<label for='abil_rough'>Rough Terrain</label><br/>
+
+<input type='checkbox' id='abil_low' ng-model='scout.abilities.low'/>
+<label for='abil_low'>Low Bar</label><br/>

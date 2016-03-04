@@ -1,0 +1,104 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.content {
+  display: inline-block;
+  text-align: left;
+  margin: auto;
+  margin-top: 1em;
+}
+
+.strike {
+  text-decoration: line-through;
+  color: #900;
+}
+
+.dataExample {
+  background-color: #eee;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.scoutcontainer {
+  background: #eee;
+  min-height: 100px;
+  padding: 10px;
+}
+
+tr.selected {
+  background: #aaa;
+}
+
+li.selected {
+  background: #aaa;
+}
+
+.scoutdivider section {
+  display: inline-block;
+  position: relative;
+}
+
+td.label {
+  text-align: right;
+}
+
+.banner {
+  position: fixed;
+  top: 0;
+  width: 100px;
+  padding: 10px;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.banner.team {
+  border-bottom-right-radius: 10px;
+  left: 0;
+}
+.banner.team[label*='Red'] {
+  background: #faa;
+}
+
+.banner.team[label*='Blue'] {
+  background: #aaf;
+}
+
+.banner.online, .banner.offline {
+  border-bottom-left-radius: 10px;
+  right: 0;
+}
+
+.banner.online {
+  background: #afa;
+}
+
+.banner.offline {
+  background: #faa;
+}
+
+nav .tab {
+  width: 200px;
+  text-align: center;
+  height: 30px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  background: #eee;
+}
+
+#matchListDiv {
+  overflow-y: auto;
+  width: 200px;
+  height: 100px;
+}
+
+#matchListDiv table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
