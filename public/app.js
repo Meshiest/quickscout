@@ -29,8 +29,6 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
       tele: {
         defenses: {},
         shots: [],
-        clickX: 0,
-        clickY: 0,
       },
       ball: {},
       other: {}
@@ -72,6 +70,9 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
         break;
     }
   }
+
+  $scope.clickX =  0
+  $scope.clickY = 0
   
   $scope._eventCode = $scope.eventCode = $cookies.get('eventCode') || ''
   $scope._scoutSide = $scope.scoutSide = $cookies.get('scoutSide') || ''
@@ -163,25 +164,25 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $scope.imageClick = function($event) {
     var element = $('#fieldcanvas')
-    var x = event.offsetX / element.width()
-    var y = event.offsetY / element.height()
+    var x = $event.offsetX / element.width()
+    var y = $event.offsetY / element.height()
     console.log(Math.floor(x*1000)/10, Math.floor(y*1000)/10)
-    $scope.scout.tele.clickX = x
-    $scope.scout.tele.clickY = y
+    $scope.clickX = x
+    $scope.clickY = y
   }
 
   $scope.addShot = function(goal) {
-    if(!$scope.scout.tele.clickX && !$scope.scout.tele.clickY) {
+    if(!$scope.clickX && !$scope.clickY) {
       return;
     }
 
     $scope.scout.tele.shots.push({
       goal: goal,
-      x: $scope.scout.tele.clickX,
-      y: $scope.scout.tele.clickY
+      x: $scope.clickX,
+      y: $scope.clickY
     })
     renderTouch()
-    $scope.scout.tele.clickX = $scope.scout.tele.clickY = undefined
+    $scope.clickX = $scope.clickY = undefined
   }
 
   $scope.removeShot = function(pos) {
