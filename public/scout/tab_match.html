@@ -67,14 +67,40 @@
 <div class='scoutdivider'>
   <section>
     <table>
+      <tr>
+        <th>
+          Type
+        </th>
+        <th>
+          Succeed
+        </th>
+        <th>
+          Total
+        </th>
+        <th>
+          History
+        </th>
+                
+      </tr>
       <tr ng-repeat='i in [1,2,3,4,5]'>
-        <td class='label'><span ng-if='!scout.defenses[i]'>Defense {{i}}</span>{{scout.defenses[i]}}</td>
+        <td class='label' style='font-weight: bold;'>
+          <span ng-if='!scout.defenses[i]'>Defense {{i}}</span>
+          {{scout.defenses[i]}}
+          </td>
         <td>
-          <input type='number' min='0' id='t_defense{{i}}' ng-model='scout.tele.defense[i]'/>
+          <button ng-click='attempt(i, 1)'>&check;</button>
+          <button ng-click='attempt(i, 0)'>&cross;</button>
+          <button ng-click='removeAttempt(i, scout.defenes[i].length-1)'>-</button>
+        </td>
+        <td style='text-align: center;'>
+          {{scout.tele.defenses[i].length}}
         </td>
         <td>
-          <label for='t_cdefense{{i}}'>Stuck</label>
-          <input type='checkbox' id='t_cdefense{{i}}' ng-model='scout.tele.defense_stuck[i]'></td>
+          <span ng-repeat="(j, try) in lastItems(i, 5)">
+            <button ng-click='removeAttempt(i, j)'>
+              {{try == '1' ? '&check;' : '&cross;'}}
+            </button>
+          </span>
         </td>
       </tr>
     </table>

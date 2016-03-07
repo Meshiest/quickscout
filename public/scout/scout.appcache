@@ -18,6 +18,7 @@ FALLBACK:
 
 NETWORK:
 /match
+/pit
 /api/matches/*
 /api/events
 

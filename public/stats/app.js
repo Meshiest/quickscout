@@ -31,6 +31,18 @@ app.config(function($routeProvider, $mdThemingProvider){
 
 });
 
+app.filter('objectOnly', function(){
+  return function(items){
+    var filtered = {}
+    Object.keys(items).forEach(function(key) {
+      if(typeof items[key] == 'object')
+        filtered[key] = items[key]
+    })
+
+    return filtered
+  }
+});
+
 app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookies) {
   $scope.toggleSideNav = function(menuId) {
     $mdSidenav(menuId).toggle();
@@ -64,21 +76,19 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
   }
 
   $scope.teams = {}
-  $scope.lastMatch = 0
   $scope.tournament = {}
+  $scope.match = {}
   $scope.numMatches = 0
-  $scope.matchKeys = []
-  $scope.matchKeyTypes = {}
   $scope.numTeams = 0
-  $scope.eventCode = $cookies.get('eventCode') || '' //'txsa'
+  $scope.eventCode = $cookies.get('eventCode') || ''
 
   $scope.updateTeams = function(){
 
     $http.get('/api/matches/'+$scope.eventCode+'/').success(function(data){
       $scope.tournament.matches = data.Matches
-
-      //$scope.numMatches = Object.keys($scope.tournament.matches).length
-      //$scope.numTeams = Object.keys($scope.tournament.teams).length
+      data.Matches.forEach(function(match) {
+        $scope.match[match.description.substr(0, 4) + " " + match.description.split(' ')[1]] = match
+      })
     })
 
     $http.get('/data').success(function(data){
@@ -91,8 +101,25 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
           $scope.numTeams ++;
         else
           $scope.numMatches ++;
+
+        $http.get(filename).success(function(scoutData){
+          filename = filename.split("_")
+          var match = /[^\/]+$/.exec(filename[0])[0], team = /\d+/.exec(filename[1])[0]
+          if(!$scope.teams[team]) {
+            $scope.teams[team] = {
+              pit: {},
+              matches: []
+            }
+          }
+          if(match == 'pit') {
+            $scope.teams[team].pit = scoutData
+          } else {
+            scoutData.matchShort = match
+            scoutData.matchName = $scope.match[match].description
+            $scope.teams[team].matches.push(scoutData)
+          }
+        })
       })
-      console.log(data)
     })
 
     /*$http.get('teams.php').success(function(data){
@@ -169,7 +196,89 @@ app.controller('OverviewCtrl', function($scope, $location, $mdToast, $cookies, $
 app.controller('TeamCtrl', function($scope, $routeParams, $location){
   console.log($routeParams.id)
   $scope.teamNumber = $routeParams.id
-});
 
+  $scope.defenses = {
+    'port': 'Porticullis',
+    'cheval': 'Cheval de Frise',
+    'ramp': 'Ramparts',
+    'moat': 'Moat',
+    'sally': 'Sally Port',
+    'rock': 'Rock Wall',
+    'rough': 'Rough Terrain',
+    'low': 'Low Bar'
+  }
+
+  $scope.attempts = function(defense) {
+    var total = 0
+    for(var i in $scope.teams[$scope.teamNumber].matches) {
+      var match = $scope.teams[$scope.teamNumber].matches[i]
+      for(var k = -1; k <= 5; k++) {
+        if(match.defenses[k] == defense) {
+          total += match.tele.defenses[k].length
+          break
+        }
+      }
+
+    }
+    return total
+  }
+
+  $scope.stuck = function(defense) {
+    var total = 0
+    for(var i in $scope.teams[$scope.teamNumber].matches) {
+      var match = $scope.teams[$scope.teamNumber].matches[i]
+
+      for(var k = -1; k <= 5; k++) {
+        if(match.defenses[k] == defense) {
+          for(var j in match.tele.defenses[k]) {
+            if(!match.tele.defenses[k][j])
+              total ++;
+          }
+        }
+      }
+
+
+    }
+    return total
+  }
+
+  $scope.opportunities = function(defense) {
+    var total = 0
+    for(var i in $scope.teams[$scope.teamNumber].matches) {
+      var match = $scope.teams[$scope.teamNumber].matches[i]
+      for(var k = -1; k <= 5; k++) {
+        if(match.defenses[k] == defense) {
+          total ++
+          break
+        }
+      }
+
+    }
+    return total
+  }
+
+  $scope.percent = function(defense) {
+    var opportunities = 0;
+    var attempts = 0
+
+    for(var i in $scope.teams[$scope.teamNumber].matches) {
+      var match = $scope.teams[$scope.teamNumber].matches[i]
+      for(var k = -1; k <= 5; k++) {
+        if(match.defenses[k] == defense) {
+          attempts += !!match.tele.defenses[k].length
+          opportunities ++
+          break
+        }
+      }
+
+    }
+    
+    if(!opportunities)
+      return "n/a"
+
+    return Math.floor(attempts / opportunities * 100) + "%"
+  }
+
+});
 
 })();

@@ -13,6 +13,13 @@ app.config(function($routeProvider){
 
 });
 
+app.filter('five', function() {
+  return function(arr) {
+    return arr.reverse().slice(0, Math.min(5, arr.length))
+  };
+});
+
+
 app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout) {
   $scope.setPath = function(path) {
       $location.path(path)
@@ -27,7 +34,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
       defenses: {},
       auto: {},
       tele: {
-        defenses: {},
+        defenses: {1:[],2:[],3:[],4:[],5:[]},
         shots: [],
       },
       ball: {},
@@ -168,6 +175,26 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     $scope.clickX = x
     $scope.clickY = y
   }
+
+  $scope.attempt = function(i, val) {
+    $scope.scout.tele.defenses[i].push(val)
+  }
+
+  $scope.removeAttempt = function(i, pos) {
+    if($scope.scout.tele.defenses[i].length <= pos)
+      return;
+    $scope.scout.tele.defenses[i].splice(pos, 1)
+  }
+
+  $scope.lastItems = function(i, num) {
+    var data = $scope.scout.tele.defenses[i]
+    var out = {}
+    for(var i = Math.max(data.length-num, 0); i < data.length; i++) {
+      out[i] = data[i]
+    }
+    return out
+  }
+
 
   $scope.addShot = function(goal) {
     if(!$scope.clickX && !$scope.clickY) {

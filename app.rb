@@ -13,6 +13,7 @@ $token = open('frcapi').read
 set :bind, '0.0.0.0'
 set :port, 8080
 
+Dir.mkdir 'public/data' unless File.exists? 'public/data'
 
 def api path
   return `curl #{$server}#{path} -H "Authorization: Basic #{$token}" -H "accept: application/json"`
@@ -97,7 +98,7 @@ get '/stats.appcache' do
     URI.escape(l[/\/data\/.*$/])
   }*"\n"
 
-  """CACHE MANIFEST
+  """CACHE MANIFEST # #{Time.now.to_f.floor}
 /angular-material.min.css
 /icons.woff2
 /icons.css
@@ -113,6 +114,7 @@ get '/stats.appcache' do
 /stats/app.js
 /stats/style.css
 /stats/_overview.html
+/stats/_defenses.html
 /stats/_team.html
 
 # Event Code (Changes with cookies)

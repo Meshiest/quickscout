@@ -1,0 +1,44 @@
+<h3>Analysis of Defenses</h3>
+
+<table>
+  <tr>
+    <th>
+      Type
+    </th>
+    <th>
+      Claimed
+    </th>
+    <th>
+      Attempts
+    </th>
+    <th>
+      Stuck
+    </th>
+    <th>
+      Opportunities
+    </th>
+    <th>
+      %
+    </th>
+  </tr>
+  <tr ng-repeat='(key, defense) in defenses'>
+    <td class='label'>
+      {{defense}}
+    </td>
+    <td class='center'>
+      {{teams[teamNumber].pit.abilities[key] ? '&check;' : '&cross;'}}
+    </td>
+    <td class='center'>
+      {{attempts(key)}}
+    </td>
+    <td class='center'>
+      {{stuck(key)}}
+    </td>
+    <td class='center'>
+      {{opportunities(key)}}
+    </td>
+    <td class='center'>
+      {{percent(key)}}
+    </td>
+  </tr>
+</table>
