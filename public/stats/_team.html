@@ -1,0 +1,88 @@
+<section layout='column'>
+  <md-card flex>
+    <md-card-title>
+      <md-card-title-text>
+        <span class="md-headline">Team {{teamNumber}}</span>
+        <span class="md-subhead">An overview a team</span>
+      </md-card-title-text>
+    </md-card-title>
+
+    <md-content layout-padding>
+      <section ng-if='teams[teamNumber].pit' layout-gt-sm='row' layout-sm='column'>
+        <article ng-repeat='(section, data) in teams[teamNumber].pit' flex>
+          <h4 class='md-title autocap'>{{section}}</h3>
+          <table>
+            <tr ng-repeat='(key, val) in data'>
+              <td class='label'>
+                {{key}}
+              </td>
+              <td>
+                {{val}}
+              </td>
+            </tr>
+          </table>
+        </article>
+      </section>
+      <span ng-if='!teams[teamNumber].pit'>
+        No Pit Scout
+      </span>
+
+      <h3 class='md-title'>Match Data</h3>
+      <table ng-if='Object.keys(teams[teamNumber].matches).length'>
+        <tr ng-repeat='key in matchKeys'>
+          <td class='label'>
+            {{key}}
+          </td>
+          <td>
+            {{matchKeyTypes[key]}}
+          </td>
+          <td>
+            {{getStats(teamNumber, key)}}
+          </td>
+        </tr>
+      </table>
+      
+      <span ng-if='!Object.keys(teams[teamNumber].matches).length'>
+        No Matches
+      </span>
+
+    </md-content>
+  </md-card>
+
+  <md-card flex>
+    <md-card-title>
+      <md-card-title-text>
+        <span class="md-headline">Match Overview</span>
+        <span class="md-subhead">A list of all matches with team {{teamNumber}}</span>
+      </md-card-title-text>
+    </md-card-title>
+
+    <md-card-content>
+
+      <table>
+        <tr>
+          <th>Match</th>
+          <th>Red</th><th></th><th></th>
+          <th>Blue</th><th></th><th></th>
+          <th>Score</th><th></th>
+        </tr>
+        <tr ng-repeat="data in tournament.matches | filter:teamNumber">
+          <td>{{data.description}}</td>
+          <td ng-repeat="(id, team) in data.Teams" class='team' ng-class='{red: id<3, blue: id>=3, bold: team.teamNumber==teamNumber}'>
+            <a ng-href='#/team/{{team.teamNumber}}'>
+              {{team.teamNumber}}
+            </a>
+          </td>
+          <td class='team red'>
+            {{data.scoreRedFinal}}
+          </td>
+          <td class='team blue'>
+            {{data.scoreBlueFinal}}
+          </td>
+        <tr/>
+      </table>
+
+    </md-card-content>
+  </md-card>
+
+</section>

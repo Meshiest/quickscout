@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html ng-app='app'><!-- manifest="scout.appcache">-->
+<html ng-app='app' <%= File.exists?("debug") ? '' : 'manifest="scout.appcache"'%>>
   <head>
     <title>Scout</title>
 
-    <link rel='stylesheet' type='text/css' href='style.css' />
+    <link rel='stylesheet' type='text/css' href='scout/style.css' />
   </head>
 
   <body ng-controller="AppCtrl">
@@ -11,7 +11,7 @@
     <script src='/angular.min.js'></script>
     <script src='/angular-route.min.js'></script>    
     <script src='/angular-cookies.min.js'></script>    
-    <script src='/app.js'></script>
+    <script src='scout/app.js'></script>
 
     <div class='content'>
       <div style='display: inline-block;'>
@@ -69,11 +69,11 @@
         <span class='tab' ng-if='events' ng-click='setTab("events")'>Events</span>
       </nav>
 
-      <div class='scoutcontainer' ng-include="'/tab_'+currTab+'.html'">
+      <div class='scoutcontainer' ng-include="'/scout/tab_'+currTab+'.html'">
       </div>
     </div>
 
-    <div ng-include="'/_online.html'"></div>
+    <div ng-include="'scout/_online.html'"></div>
     <div class='banner team' label='{{scoutSide}}'>
       {{scoutSide}}
     </div>
