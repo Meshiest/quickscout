@@ -227,6 +227,9 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
       if($scope.scoutedMatches[match] == 's' || !$scope.scoutedMatches[match])
         return;
 
+      var obj = $cookies.getObject("scout_"+match)
+      obj.eventCode = $scope.eventCode
+      
       $http({
         method: 'POST',
         url: '/match',
@@ -234,7 +237,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
           'Content-Type': 'application/json'
         },
         params: {
-          scout: JSON.stringify($cookies.getObject("scout_"+match))
+          scout: JSON.stringify(obj)
         }
       }).
         success(function(resp){
@@ -296,7 +299,9 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope.saveTeam = function() {
     var data = $scope.scout
     console.log(data)
-    var team = $scope.pitQueue[$scope.currTeam]
+    var team = data.main.teamNumber
+    if(!team)
+      return;
     $scope.scoutedTeams[team] = true
     $cookies.putObject('scoutedTeams', $scope.scoutedTeams)
     $cookies.putObject('pit_'+team, data)

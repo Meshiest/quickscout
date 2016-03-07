@@ -1,0 +1,23 @@
+CACHE MANIFEST
+/jquery.min.js
+/angular.min.js
+/angular-route.min.js
+/angular-cookies.min.js
+/halffield.png
+/scout/app.js
+/scout/style.css
+/scout
+/scout/tab_pit.html
+/scout/tab_match.html
+/scout/tab_data.html
+/scout/tab_events.html
+/events
+
+FALLBACK:
+/scout/_online.html /scout/_offline.html
+
+NETWORK:
+/match
+/api/events
+
+#v0.0.3
