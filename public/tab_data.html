@@ -26,8 +26,9 @@
 
 <h3>Pit Scout Queue (Currently on {{pitQueue[currTeam]}})</h3>
 
+
 <form ng-submit='addQueue(tempTeamNum)'>
-  <input type='number' ng-model='tempTeamNum' placeholder='Team Number' />
+  <input type='number' id='tempTeamNum' ng-model='tempTeamNum' placeholder='Team Number' />
   <input type='submit' value='&plus;' />
 </form>
 

@@ -6,7 +6,7 @@
 <button ng-click='clearMatch(currMatch)'>Clear Match</button>
 
 
-<h3>Defenses Picked</h3>
+<h3>Defenses Against</h3>
 
 <div class='scoutdivider'>
   <section>
@@ -167,16 +167,18 @@
     <label for='defenderother'>Was a Defender</label><br/>
 
 
-    Scale<br/>
+    End Location<br/>
     <input type='radio' ng-model='scout.other.scalepos' value='left' id='scaleleft'/>
     <label for='scaleleft'>Left</label><br/>
     <input type='radio' ng-model='scout.other.scalepos' value='center' id='scalecenter'/>
     <label for='scalecenter'>Center</label><br/>
     <input type='radio' ng-model='scout.other.scalepos' value='right' id='scaleright'/>
     <label for='scaleright'>Right</label><br/>
+    <input type='radio' ng-model='scout.other.scalepos' value='false' id='scalenone'/>
+    <label for='scalenone'>None</label><br/>
 
     <input type='checkbox' ng-model='scout.other.scalelift' id='scalelift'/>
-    <label for='scalelift'>Scale Lift</label><br/>
+    <label for='scalelift'>Lifted</label><br/>
     
   </section>
 </div>

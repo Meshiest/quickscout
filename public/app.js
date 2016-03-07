@@ -92,8 +92,6 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope.scout = $scope.getScout()
   $scope.events = undefined
 
-  $scope.tempTeamNum = ''
-
   $http.get('/events').success(function(resp){
     $scope.events = resp.Events
   })
@@ -284,7 +282,8 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
       return;
 
     $scope.pitQueue.push(num)
-    $scope.tempTeamNum = '';
+    $scope.tempTeamNum = ''
+    $('#tempTeamNum')[0].value = ''
     $cookies.putObject('pitQueue', $scope.pitQueue)
   }
 
