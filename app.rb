@@ -98,7 +98,7 @@ get '/stats.appcache' do
     [URI.escape(l[/\/data\/.*$/])]*2*' '
   }*"\n"
 
-  """CACHE MANIFEST
+  """CACHE MANIFEST # #{Time.now.to_f.floor}
 /angular-material.min.css
 /icons.woff2
 /icons.css
@@ -115,7 +115,9 @@ get '/stats.appcache' do
 /stats/style.css
 /stats/_overview.html
 /stats/_defenses.html
+/stats/_shots.html
 /stats/_team.html
+/stats/_threeteams.html
 
 FALLBACK:
 # Scouted Data
@@ -123,7 +125,7 @@ FALLBACK:
 #{data}
 
 # Event Code (Changes with cookies)
-/api/scores/#{cookies['eventCode']}/quals /api/scores/#{cookies['eventCode']}/quals
+/api/scores/#{cookies['eventCode']}/qual /api/scores/#{cookies['eventCode']}/qual
 /api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/ 
 
 NETWORK:

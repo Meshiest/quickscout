@@ -193,7 +193,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   }
 
   $scope.lastItems = function(i, num) {
-    if(!$scope.scout || !$scope.scout.tele)
+    if($scope.currTab != 'match')
       return
     var data = $scope.scout.tele.defenses[i]
     var out = {}

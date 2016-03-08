@@ -1,4 +1,4 @@
-<h3>Analysis of Defenses</h3>
+<h3>Analysis {{teamNumber}}</h3>
 
 <table>
   <tr>
@@ -35,22 +35,22 @@
       {{teams[teamNumber].pit.abilities[key] ? '&check;' : '&cross;'}}
     </td>
     <td align='center'>
-      {{attempts(key)}}
+      {{attempts(teamNumber, key)}}
     </td>
     <td align='center'>
-      {{stuck(key)}}
+      {{stuck(teamNumber, key)}}
     </td>
     <td align='center'>
-      {{tortuga(key)}}
+      {{tortuga(teamNumber, key)}}
     </td>
     <td align='center'>
-      {{opportunities(key)}}
+      {{opportunities(teamNumber, key)}}
     </td>
     <td align='center'>
-      {{percent(key)}}
+      {{percent(teamNumber, key)}}
     </td>
     <td align='center'>
-      {{teams[teamNumber].picks[key]}}
+      {{teams[teamNumber].picks[key]}}/{{teams[teamNumber].totalMatches}}
     </td>
   </tr>
 </table>
