@@ -23,6 +23,10 @@ app.config(function($routeProvider, $mdThemingProvider){
     templateUrl: 'stats/_overview.html',
     controller: 'OverviewCtrl'
   }).
+  when('/compare',{
+    templateUrl: 'stats/_threeteams.html',
+    controller: 'TeamCtrl'
+  }).
   when('/team/:id', {
     templateUrl: 'stats/_team.html',
     controller: 'TeamCtrl'
@@ -50,9 +54,14 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
 
   $scope.menu = [
     {
-        title: 'Overview',
-        icon: 'dashboard',
-        path: '/overview'
+      title: 'Overview',
+      icon: 'dashboard',
+      path: '/overview'
+    },
+    {
+      title: 'Compare',
+      icon: 'compare_arrows',
+      path: '/compare'
     },
     /*{ // to be re-implemented when the time comes
         title: 'Pit Scout',
@@ -121,7 +130,8 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
         'draw': 0,
         'rock': 0,
         'rough': 0,
-      }
+      },
+      totalMatches: 0
     }
   }
 
@@ -133,7 +143,7 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
         $scope.match[match.description.substr(0, 4) + " " + match.description.split(' ')[1]] = match
       })
 
-      $http.get('/api/scores/'+$scope.eventCode+'/quals').success(function(data){
+      $http.get('/api/scores/'+$scope.eventCode+'/qual').success(function(data){
         $scope.tournament.scores = data.MatchScores
         $scope.tournament.scores.forEach(function(score) {
           var match = $scope.match[score.matchLevel.substr(0, 4) + " " + score.matchNumber]
@@ -153,6 +163,7 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
             if(!$scope.teams[teamNumber]) {
               $scope.teams[teamNumber] = emptyTeam()
             }
+            $scope.teams[teamNumber].totalMatches ++
 
             var side = team.station.substr(0, team.station.length-1)
             match['picks'+side].forEach(function(def){
@@ -268,6 +279,7 @@ app.controller('OverviewCtrl', function($scope, $location, $mdToast, $cookies, $
 app.controller('TeamCtrl', function($scope, $routeParams, $location){
   console.log($routeParams.id)
   $scope.teamNumber = $routeParams.id
+  $scope.selectedTeams = []
 
   $scope.defenses = {
     'port': 'Portcullis',
@@ -281,10 +293,21 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
     'low': 'Low Bar'
   }
 
-  $scope.attempts = function(defense) {
+  $scope.select = function(match, index) {
+    index = Math.floor(index/3)
+
+    $scope.selectedTeams = match.Teams
+      .slice(index*3, index*3+3)
+      .map(function(t){
+        console.log(t.teamNumber)
+        return t.teamNumber
+      })
+  }
+
+  $scope.attempts = function(num, defense) {
     var total = 0
-    for(var i in $scope.teams[$scope.teamNumber].matches) {
-      var match = $scope.teams[$scope.teamNumber].matches[i]
+    for(var i in $scope.teams[num].matches) {
+      var match = $scope.teams[num].matches[i]
       for(var k = -1; k <= 5; k++) {
         if(match.defenses[k] == defense) {
           total += match.tele.defenses[k].length
@@ -296,10 +319,10 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
     return total
   }
 
-  $scope.stuck = function(defense) {
+  $scope.stuck = function(num, defense) {
     var total = 0
-    for(var i in $scope.teams[$scope.teamNumber].matches) {
-      var match = $scope.teams[$scope.teamNumber].matches[i]
+    for(var i in $scope.teams[num].matches) {
+      var match = $scope.teams[num].matches[i]
 
       for(var k = -1; k <= 5; k++) {
         if(match.defenses[k] == defense) {
@@ -315,10 +338,10 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
     return total
   }
 
-  $scope.tortuga = function(defense) {
+  $scope.tortuga = function(num, defense) {
     var total = 0
-    for(var i in $scope.teams[$scope.teamNumber].matches) {
-      var match = $scope.teams[$scope.teamNumber].matches[i]
+    for(var i in $scope.teams[num].matches) {
+      var match = $scope.teams[num].matches[i]
 
       for(var k = -1; k <= 5; k++) {
         if(match.defenses[k] == defense) {
@@ -334,10 +357,10 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
     return total
   }
 
-  $scope.opportunities = function(defense) {
+  $scope.opportunities = function(num, defense) {
     var total = 0
-    for(var i in $scope.teams[$scope.teamNumber].matches) {
-      var match = $scope.teams[$scope.teamNumber].matches[i]
+    for(var i in $scope.teams[num].matches) {
+      var match = $scope.teams[num].matches[i]
       for(var k = -1; k <= 5; k++) {
         if(match.defenses[k] == defense) {
           total ++
@@ -349,12 +372,12 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
     return total
   }
 
-  $scope.percent = function(defense) {
+  $scope.percent = function(num, defense) {
     var opportunities = 0;
     var attempts = 0
 
-    for(var i in $scope.teams[$scope.teamNumber].matches) {
-      var match = $scope.teams[$scope.teamNumber].matches[i]
+    for(var i in $scope.teams[num].matches) {
+      var match = $scope.teams[num].matches[i]
       for(var k = -1; k <= 5; k++) {
         if(match.defenses[k] == defense) {
           attempts += !!match.tele.defenses[k].length
@@ -369,6 +392,57 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
       return "n/a"
 
     return Math.floor(attempts / opportunities * 100) + "%"
+  }
+
+  $scope.showhigh = true
+  $scope.showlow = false
+  $scope.showhmiss = true
+  $scope.showlmiss = false
+
+  $scope.colors = {
+    high: "#afa",
+    low: "#aaf",
+    hmiss: "#afa",
+    lmiss: "#aaf"
+  }
+
+  $scope.showShots = function(teamNum, timeout) {
+    if(!teamNum) {
+      $scope.selectedTeams.forEach($scope.showShots)
+      return;
+    }
+    setTimeout(function(){
+      var canvas = document.getElementById('fieldcanvas'+teamNum)
+      var ctx = canvas.getContext('2d')
+      ctx.canvas.width = ctx.canvas.height = 200
+      var img = document.getElementById('halffieldimg')
+      ctx.drawImage(img, 0, 0, 200, 200);
+      ctx.lineWidth=3
+      
+      for(var i = 0; i < $scope.teams[teamNum].matches.length; i++) {
+        var match = $scope.teams[teamNum].matches[i]
+        for(var j = 0; j < match.tele.shots.length; j++) {
+          var shot = match.tele.shots[j]
+          if(!$scope['show'+shot.goal])
+            continue;
+          ctx.strokeStyle=$scope.colors[shot.goal]
+          if(shot.goal.endsWith("miss")) {
+            ctx.beginPath()
+            ctx.moveTo(shot.x*200-5,shot.y*200-5)
+            ctx.lineTo(shot.x*200+5,shot.y*200+5)
+            ctx.moveTo(shot.x*200+5,shot.y*200-5)
+            ctx.lineTo(shot.x*200-5,shot.y*200+5)
+            ctx.stroke()
+            
+          } else {
+            ctx.beginPath()
+            ctx.arc(shot.x*200, shot.y*200, 5, 0, 6.29)
+            ctx.stroke()            
+          }
+
+        }
+      }
+    }, (timeout ? 500 : 0))
   }
 
 });

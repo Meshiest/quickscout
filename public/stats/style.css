@@ -17,6 +17,13 @@ td.label {
   text-align: center;
 }
 
+md-content.matches {
+  overflow-x: auto;
+}
+
+.matches table {
+  display: inline-block;
+}
 
 span.team {
   padding: 0.2em;  
