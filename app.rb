@@ -95,7 +95,7 @@ get '/stats.appcache' do
   headers['Content-Type'] = 'text/cache-manifest'
 
   data = Dir["public/data/*"].map{|l|
-    URI.escape(l[/\/data\/.*$/])
+    [URI.escape(l[/\/data\/.*$/])]*2*' '
   }*"\n"
 
   """CACHE MANIFEST
@@ -117,14 +117,14 @@ get '/stats.appcache' do
 /stats/_defenses.html
 /stats/_team.html
 
-# Event Code (Changes with cookies)
-/api/matches/#{cookies['eventCode']}/
-
+FALLBACK:
 # Scouted Data
-/data
+/data /data
 #{data}
 
-FALLBACK:
+# Event Code (Changes with cookies)
+/api/scores/#{cookies['eventCode']}/quals /api/scores/#{cookies['eventCode']}/quals
+/api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/ 
 
 NETWORK:
 """

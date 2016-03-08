@@ -1,5 +1,5 @@
 
-body, html, md-content.bg{
+body, html, md-content.bg {
   background-color: #eee;
 }
 
@@ -16,6 +16,7 @@ td.label {
 .center {
   text-align: center;
 }
+
 
 span.team {
   padding: 0.2em;  

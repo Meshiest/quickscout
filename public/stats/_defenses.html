@@ -15,30 +15,42 @@
       Stuck
     </th>
     <th>
+      Tortuga
+    </th>
+    <th>
       Opportunities
     </th>
     <th>
       %
+    </th>
+    <th>
+      Times Picked
     </th>
   </tr>
   <tr ng-repeat='(key, defense) in defenses'>
     <td class='label'>
       {{defense}}
     </td>
-    <td class='center'>
+    <td align='center'>
       {{teams[teamNumber].pit.abilities[key] ? '&check;' : '&cross;'}}
     </td>
-    <td class='center'>
+    <td align='center'>
       {{attempts(key)}}
     </td>
-    <td class='center'>
+    <td align='center'>
       {{stuck(key)}}
     </td>
-    <td class='center'>
+    <td align='center'>
+      {{tortuga(key)}}
+    </td>
+    <td align='center'>
       {{opportunities(key)}}
     </td>
-    <td class='center'>
+    <td align='center'>
       {{percent(key)}}
+    </td>
+    <td align='center'>
+      {{teams[teamNumber].picks[key]}}
     </td>
   </tr>
 </table>
