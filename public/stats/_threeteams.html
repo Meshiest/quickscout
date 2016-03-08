@@ -51,27 +51,29 @@
       </md-card-title-text>
     </md-card-title>
 
-    <md-card-content>
-
+    <md-card-content class='matches'>
       <table>
         <tr>
           <th>Match</th>
-          <th>Red</th><th></th><th></th>
-          <th>Blue</th><th></th><th></th>
-          <th>Score</th><th></th>
+          <th>Teams &amp; Score</th>
         </tr>
         <tr ng-repeat="match in tournament.matches">
           <td>{{match.description}}</td>
-          <td ng-repeat="(id, team) in match.Teams" class='team' ng-class='{red: id<3, blue: id>=3, bold: selectedTeams.include(team.teamNumber)}'>
-            <a ng-click='select(match, id)'>
-              {{team.teamNumber}}
-            </a>
-          </td>
-          <td class='team red'>
-            {{match.scoreRedFinal}}
-          </td>
-          <td class='team blue'>
-            {{match.scoreBlueFinal}}
+          <td>
+            <table>
+              <tr ng-repeat='b in [0, 3]'>
+                <td ng-repeat='i in [0+b,1+b,2+b]' class='team' ng-class='{red: b==0, blue:b==3}'>
+                  <a ng-click='select(match, b)'>
+                    {{match.Teams[i].teamNumber}}
+                  </a>
+                </td>
+                <td class='team' ng-class='{red: b==0, blue:b==3}'>
+                  {{match['score'+(b==0?'Red':'Blue')+"Final"]}}
+                </td>
+              </tr>
+              <tr>
+              </tr>
+            </table>
           </td>
         <tr/>
       </table>
