@@ -98,7 +98,7 @@ get '/stats.appcache' do
     [URI.escape(l[/\/data\/.*$/])]*2*' '
   }*"\n"
 
-  """CACHE MANIFEST # #{Time.now.to_f.floor}
+  """CACHE MANIFEST
 /angular-material.min.css
 /icons.woff2
 /icons.css
