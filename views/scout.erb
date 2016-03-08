@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app='app' <%= File.exists?("debug") ? '' : 'manifest="scout.appcache"'%>>
+<html ng-app='app' <%= File.exists?("debug") ? '' : 'manifest="scout/scout.appcache"'%>>
   <head>
     <title>Scout</title>
 
@@ -67,6 +67,7 @@
         <span class='tab' ng-click='setTab("match")'>Match</span>
         <span class='tab' ng-click='setTab("data")'>Data</span>
         <span class='tab' ng-if='events' ng-click='setTab("events")'>Events</span>
+        <span class='tab' ng-if='teams' ng-click='setTab("teams")'>Teams</span>
       </nav>
 
       <div class='scoutcontainer' ng-include="'/scout/tab_'+currTab+'.html'">

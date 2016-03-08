@@ -13,6 +13,13 @@ app.config(function($routeProvider){
 
 });
 
+app.filter('five', function() {
+  return function(arr) {
+    return arr.reverse().slice(0, Math.min(5, arr.length))
+  };
+});
+
+
 app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout) {
   $scope.setPath = function(path) {
       $location.path(path)
@@ -27,7 +34,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
       defenses: {},
       auto: {},
       tele: {
-        defenses: {},
+        defenses: {1:[],2:[],3:[],4:[],5:[]},
         shots: [],
       },
       ball: {},
@@ -91,10 +98,16 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $scope.scout = $scope.getScout()
   $scope.events = undefined
+  $scope.teams = undefined
 
   $http.get('/events').success(function(resp){
     $scope.events = resp.Events
   })
+
+  $http.get('/api/teams?eventCode='+$scope.eventCode).success(function(resp){
+    $scope.teams = resp.teams
+  })
+
 
   $scope.setCurrMatch = function(num) {
     num = Math.min($scope.matches.length-1, Math.max(0, num))
@@ -168,6 +181,28 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     $scope.clickX = x
     $scope.clickY = y
   }
+
+  $scope.attempt = function(i, val) {
+    $scope.scout.tele.defenses[i].push(val)
+  }
+
+  $scope.removeAttempt = function(i, pos) {
+    if($scope.scout.tele.defenses[i].length <= pos)
+      return;
+    $scope.scout.tele.defenses[i].splice(pos, 1)
+  }
+
+  $scope.lastItems = function(i, num) {
+    if(!$scope.scout || !$scope.scout.tele)
+      return
+    var data = $scope.scout.tele.defenses[i]
+    var out = {}
+    for(var i = Math.max(data.length-num, 0); i < data.length; i++) {
+      out[i] = data[i]
+    }
+    return out
+  }
+
 
   $scope.addShot = function(goal) {
     if(!$scope.clickX && !$scope.clickY) {
@@ -286,7 +321,8 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
     $scope.pitQueue.push(num)
     $scope.tempTeamNum = ''
-    $('#tempTeamNum')[0].value = ''
+    if($('#tempTeamNum')[0])
+      $('#tempTeamNum')[0].value = ''
     $cookies.putObject('pitQueue', $scope.pitQueue)
   }
 

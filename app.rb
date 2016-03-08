@@ -13,6 +13,7 @@ $token = open('frcapi').read
 set :bind, '0.0.0.0'
 set :port, 8080
 
+Dir.mkdir 'public/data' unless File.exists? 'public/data'
 
 def api path
   return `curl #{$server}#{path} -H "Authorization: Basic #{$token}" -H "accept: application/json"`
@@ -21,14 +22,14 @@ end
 $requests = {}
 
 get %r{^\/api\/.*$} do
-  puts request.path[5...-1]
-  req = request.path[5...-1]
+  req = request.path[5..-1]+"?"+params.to_a.map{|p|p*?=}*?&
+  puts req
   content_type :json
   if $requests[req] && ($requests[req][:time] + 60 * 1000 > Time.now.to_f) 
     $requests[req][:data]
   else
     $requests[req] = {
-      data: api(request.path[5...-1]),
+      data: api(req),
       time: Time.now.to_f
     }
     $requests[req][:data]
@@ -94,7 +95,7 @@ get '/stats.appcache' do
   headers['Content-Type'] = 'text/cache-manifest'
 
   data = Dir["public/data/*"].map{|l|
-    URI.escape(l[/\/data\/.*$/])
+    [URI.escape(l[/\/data\/.*$/])]*2*' '
   }*"\n"
 
   """CACHE MANIFEST
@@ -113,16 +114,17 @@ get '/stats.appcache' do
 /stats/app.js
 /stats/style.css
 /stats/_overview.html
+/stats/_defenses.html
 /stats/_team.html
 
-# Event Code (Changes with cookies)
-/api/matches/#{cookies['eventCode']}/
-
+FALLBACK:
 # Scouted Data
-/data
+/data /data
 #{data}
 
-FALLBACK:
+# Event Code (Changes with cookies)
+/api/scores/#{cookies['eventCode']}/quals /api/scores/#{cookies['eventCode']}/quals
+/api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/ 
 
 NETWORK:
 """

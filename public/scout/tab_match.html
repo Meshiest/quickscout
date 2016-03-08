@@ -14,11 +14,12 @@
       <label for='d_defense{{i}}'>Defense {{i}}</label>
       <select ng-model='scout.defenses[i]' id='d_defense{{i}}'>
         <option value='false' selected="selected">None</option>
-        <option value='port'>Porticullis</option>
+        <option value='port'>Portcullis</option>
         <option value='cheval'>Cheval de Frise</option>
         <option value='ramp'>Ramparts</option>
         <option value='moat'>Moat</option>
         <option value='sally'>Sally Port</option>
+        <option value='draw'>Draw Bridge</option>
         <option value='rock'>Rock Wall</option>
         <option value='rough'>Rough Terrain</option>
         <option value='low'>Low Bar</option>
@@ -45,11 +46,12 @@
     <label for='defense'>Reached Defense</label><br/>
     <select ng-model='scout.auto.defense' id='defense'>
       <option value='false' selected="selected">None</option>
-      <option value='port'>Porticullis</option>
+      <option value='port'>Portcullis</option>
       <option value='cheval'>Cheval de Frise</option>
       <option value='ramp'>Ramparts</option>
       <option value='moat'>Moat</option>
       <option value='sally'>Sally Port</option>
+      <option value='draw'>Draw Bridge</option>
       <option value='rock'>Rock Wall</option>
       <option value='rough'>Rough Terrain</option>
       <option value='low'>Low Bar</option>
@@ -67,14 +69,41 @@
 <div class='scoutdivider'>
   <section>
     <table>
+      <tr>
+        <th>
+          Type
+        </th>
+        <th>
+          Succeed
+        </th>
+        <th>
+          Total
+        </th>
+        <th>
+          History
+        </th>
+                
+      </tr>
       <tr ng-repeat='i in [1,2,3,4,5]'>
-        <td class='label'><span ng-if='!scout.defenses[i]'>Defense {{i}}</span>{{scout.defenses[i]}}</td>
-        <td>
-          <input type='number' min='0' id='t_defense{{i}}' ng-model='scout.tele.defense[i]'/>
+        <td class='label' style='font-weight: bold;'>
+          <span ng-if='!scout.defenses[i]'>Defense {{i}}</span>
+          {{scout.defenses[i]}}
         </td>
         <td>
-          <label for='t_cdefense{{i}}'>Stuck</label>
-          <input type='checkbox' id='t_cdefense{{i}}' ng-model='scout.tele.defense_stuck[i]'></td>
+          <button ng-click='attempt(i, 1)'>&check;</button>
+          <button ng-click='attempt(i, 0)'>&cross;</button>
+          <button ng-click='attempt(i, -1)'>&#9760;</button>
+          <button ng-click='removeAttempt(i, scout.defenes[i].length-1)'>-</button>
+        </td>
+        <td style='text-align: center;'>
+          {{scout.tele.defenses[i].length}}
+        </td>
+        <td>
+          <span ng-repeat="(j, try) in lastItems(i, 5)">
+            <button ng-click='removeAttempt(i, j)'>
+              {{try == '1' ? '&check;' : try == '-1' ? '&#9760;' : '&cross;'}}
+            </button>
+          </span>
         </td>
       </tr>
     </table>

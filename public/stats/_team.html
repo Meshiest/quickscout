@@ -8,7 +8,12 @@
     </md-card-title>
 
     <md-content layout-padding>
-      <section ng-if='teams[teamNumber].pit' layout-gt-sm='row' layout-sm='column'>
+
+      
+      <section ng-include="'stats/_defenses.html'">
+      </section>
+
+      <section ng-if='teams[teamNumber].pit' layout='column'>
         <article ng-repeat='(section, data) in teams[teamNumber].pit' flex>
           <h4 class='md-title autocap'>{{section}}</h3>
           <table>
@@ -27,22 +32,30 @@
         No Pit Scout
       </span>
 
-      <h3 class='md-title'>Match Data</h3>
-      <table ng-if='Object.keys(teams[teamNumber].matches).length'>
-        <tr ng-repeat='key in matchKeys'>
-          <td class='label'>
-            {{key}}
-          </td>
-          <td>
-            {{matchKeyTypes[key]}}
-          </td>
-          <td>
-            {{getStats(teamNumber, key)}}
-          </td>
-        </tr>
-      </table>
+      <md-card ng-repeat='match in teams[teamNumber].matches'>
+        <md-card-title>
+          <md-card-title-text>
+            {{match.matchName}}
+          </md-card-title-text>
+        </md-card-title>
+        <md-content layout-padding>
+          <article ng-repeat='(section, data) in match | objectOnly' flex>
+            <h5 class='md-title autocap'>{{section}}</h5>
+            <table>
+              <tr ng-repeat='(key, val) in data'>
+                <td class='label'>
+                  {{key}}
+                </td>
+                <td>
+                  {{val}}
+                </td>
+              </tr>
+            </table>
+          </article>
+        </md-content>
+      </md-card>
       
-      <span ng-if='!Object.keys(teams[teamNumber].matches).length'>
+      <span ng-if='!teams[teamNumber].matches.length'>
         No Matches
       </span>
 

@@ -11,6 +11,7 @@ CACHE MANIFEST
 /scout/tab_match.html
 /scout/tab_data.html
 /scout/tab_events.html
+/scout/tab_teams.html
 /events
 
 FALLBACK:
@@ -18,7 +19,9 @@ FALLBACK:
 
 NETWORK:
 /match
+/pit
 /api/matches/*
 /api/events
+/api/teams
 
-#v0.0.3
+#v0.0.12

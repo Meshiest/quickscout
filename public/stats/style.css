@@ -1,5 +1,5 @@
 
-body, html, md-content.bg{
+body, html, md-content.bg {
   background-color: #eee;
 }
 
@@ -12,6 +12,11 @@ td.label {
 .autocap {
   text-transform: capitalize;
 }
+
+.center {
+  text-align: center;
+}
+
 
 span.team {
   padding: 0.2em;  
