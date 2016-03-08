@@ -98,10 +98,16 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $scope.scout = $scope.getScout()
   $scope.events = undefined
+  $scope.teams = undefined
 
   $http.get('/events').success(function(resp){
     $scope.events = resp.Events
   })
+
+  $http.get('/api/teams?eventCode='+$scope.eventCode).success(function(resp){
+    $scope.teams = resp.teams
+  })
+
 
   $scope.setCurrMatch = function(num) {
     num = Math.min($scope.matches.length-1, Math.max(0, num))
@@ -187,6 +193,8 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   }
 
   $scope.lastItems = function(i, num) {
+    if(!$scope.scout || !$scope.scout.tele)
+      return
     var data = $scope.scout.tele.defenses[i]
     var out = {}
     for(var i = Math.max(data.length-num, 0); i < data.length; i++) {
@@ -313,7 +321,8 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
     $scope.pitQueue.push(num)
     $scope.tempTeamNum = ''
-    $('#tempTeamNum')[0].value = ''
+    if($('#tempTeamNum')[0])
+      $('#tempTeamNum')[0].value = ''
     $cookies.putObject('pitQueue', $scope.pitQueue)
   }
 

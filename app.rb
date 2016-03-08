@@ -22,14 +22,14 @@ end
 $requests = {}
 
 get %r{^\/api\/.*$} do
-  puts request.path[5...-1]
-  req = request.path[5...-1]
+  req = request.path[5..-1]+"?"+params.to_a.map{|p|p*?=}*?&
+  puts req
   content_type :json
   if $requests[req] && ($requests[req][:time] + 60 * 1000 > Time.now.to_f) 
     $requests[req][:data]
   else
     $requests[req] = {
-      data: api(request.path[5...-1]),
+      data: api(req),
       time: Time.now.to_f
     }
     $requests[req][:data]
