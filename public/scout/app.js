@@ -140,7 +140,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     $http.get('/api/matches/'+$scope._eventCode+'/').
       success(function(resp) {
         if($scope._eventCode != $scope.eventCode) {
-          $scope.clearAll(true)
+          $scope.clearData(true)
         }
 
         $scope.matches = resp.Matches.map(function(obj){
