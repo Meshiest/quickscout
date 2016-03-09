@@ -158,10 +158,6 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
         $cookies.put('scoutSide', $scope.scoutSide)
         $cookies.putObject('matches', $scope.matches)
 
-        $http.get('/events').success(function(resp){
-          $scope.events = resp.Events
-        })
-
         $http.get('/api/teams?eventCode='+$scope.eventCode).success(function(resp){
           $scope.teams = resp.teams
         })
