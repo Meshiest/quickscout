@@ -78,6 +78,12 @@
     <div class='banner team' label='{{scoutSide}}'>
       {{scoutSide}}
     </div>
+
+    <div class='notifications'>
+      <div class='notification' ng-repeat='note in notifications'>
+        {{note.msg}}
+      </div>
+    </div>
     
     <img id='halffieldimg' src='halffield.png' style='display: none; position: fixed; top: -9999; left: -9999;' />
 

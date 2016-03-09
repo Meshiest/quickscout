@@ -26,7 +26,19 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   }
 
   $scope.notify = function(msg) {
+    var note = {
+      msg: msg,
+      create: new Date().getTime()
+    }
+    $scope.notifications.push(note)
+    $timeout(function(){$scope.removeNote(note)}, 5000)
     console.log(msg)
+  }
+
+  $scope.removeNote = function(note) {
+    var index = $scope.notifications.indexOf(note)
+    if(index > -1)
+      $scope.notifications.splice(index, 1)
   }
 
   $scope.emptyMatchScout = function(){
@@ -101,6 +113,8 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope.scout = $scope.getScout()
   $scope.events = undefined
   $scope.teams = undefined
+
+  $scope.notifications = []
 
   $http.get('/events').success(function(resp){
     $scope.events = resp.Events
@@ -234,6 +248,9 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   }
 
   $scope.clearMatch = function(num) {
+    if(!$scope.matches[num])
+        return
+
     var shouldClear = confirm("Clear Scouted Data for " + $scope.matches[num][0] + "?")
     if(shouldClear) {
       $cookies.remove('scout_'+$scope.matches[num][0])
@@ -338,6 +355,9 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     var team = data.main.teamNumber
     if(!team)
       return;
+    if($scope.pitQueue.indexOf(team) == -1) {
+      $scope.addQueue(team)
+    }
     $scope.scoutedTeams[team] = true
     $cookies.putObject('scoutedTeams', $scope.scoutedTeams)
     $cookies.putObject('pit_'+team, data)
@@ -346,6 +366,9 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   }
 
   $scope.clearTeam = function(num) {
+    if(!$scope.pitQueue[num])
+      return
+
     var shouldClear = confirm("Clear Scouted Data for " + $scope.pitQueue[num] + "?")
     if(shouldClear) {
       $cookies.remove('pit_'+$scope.pitQueue[num])
