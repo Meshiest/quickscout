@@ -130,5 +130,6 @@ FALLBACK:
 /api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/ 
 
 NETWORK:
+*
 """
 end
