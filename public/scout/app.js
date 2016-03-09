@@ -80,6 +80,8 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $scope.clickX =  0
   $scope.clickY = 0
+
+  $scope.updating = false
   
   $scope._eventCode = $scope.eventCode = $cookies.get('eventCode') || ''
   $scope._scoutSide = $scope.scoutSide = $cookies.get('scoutSide') || ''
@@ -137,8 +139,10 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   }
 
   $scope.getMatches = function() {
+    $scope.updating = true
     $http.get('/api/matches/'+$scope._eventCode+'/').
       success(function(resp) {
+        $scope.updating = false
         if($scope._eventCode != $scope.eventCode) {
           $scope.clearData(true)
         }
@@ -165,6 +169,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
       }).error(function(err) {
         $scope.notify("Couldn't get match data")
+        $scope.updating = false
       })
   }
 

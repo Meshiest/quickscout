@@ -32,34 +32,6 @@
 
       </md-content>
     </md-card>
-
-    <md-card flex>
-      <md-card-title>
-        <md-card-title-text>
-          <span class="md-headline">Last Update</span>
-          <span class="md-subhead">Time since last data dump</span>
-        </md-card-title-text>
-      </md-card-title>
-      
-      <md-content layout-padding>
-        <table>
-          <tr>
-            <td class='label'>Next Match</td>
-            <td>
-              <span ng-repeat='match in lastMatchData | orderBy: "side"' class='team {{match.side}}'>
-                <a ng-href='#/team/{{match.team}}'>
-                  {{match.team}}
-                </a>
-              </span>
-            </td>
-          </tr>
-          <tr>
-            <td class='label'>Matches</td>
-            <td>{{lastMatch}}</td>
-          </tr>
-        </table>
-      </md-content>
-    </md-card>
   </section>
 
   <section layout-gt-md='row' layout='column'>

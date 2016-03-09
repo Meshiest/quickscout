@@ -91,6 +91,8 @@ get '/data' do
   Dir["public/data/*"].map{|l|l[/\/data\/.*$/]}.to_json
 end
 
+$startTime = Time.now.to_f
+
 get '/stats.appcache' do
   headers['Content-Type'] = 'text/cache-manifest'
 
@@ -98,7 +100,7 @@ get '/stats.appcache' do
     [URI.escape(l[/\/data\/.*$/])]*2*' '
   }*"\n"
 
-  """CACHE MANIFEST
+  """CACHE MANIFEST # Started: #{$startTime}
 CACHE:
 /angular-material.min.css
 /icons.woff2
