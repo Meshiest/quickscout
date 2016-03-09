@@ -157,6 +157,16 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
         $cookies.put('eventCode', $scope.eventCode)
         $cookies.put('scoutSide', $scope.scoutSide)
         $cookies.putObject('matches', $scope.matches)
+
+        $http.get('/events').success(function(resp){
+          $scope.events = resp.Events
+        })
+
+        $http.get('/api/teams?eventCode='+$scope.eventCode).success(function(resp){
+          $scope.teams = resp.teams
+        })
+
+
       }).error(function(err) {
         $scope.notify("Couldn't get match data")
       })
@@ -370,6 +380,112 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
 
 
+});
+
+app.directive("drawing", function(){
+  return {
+    restrict: "A",
+    link: function(scope, element){
+      var ctx = element[0].getContext('2d');
+
+      // variable that decides if something should be drawn on mousemove
+      var drawing = false;
+
+      // the last coordinates before the current move
+      var lastX = {};
+      var lastY = {};
+
+      element.bind('mousedown touchstart', function(event){
+        if(event.type.startsWith("touch")) {
+          for(var j in event.originalEvent.changedTouches) {
+            var touch = event.originalEvent.changedTouches[j]
+            var i = touch.identifier
+            console.log("Starting "+i)
+            
+            lastX[i] = touch.pageX
+            lastY[i] = touch.pageY
+          }
+        } else {
+          if(event.offsetX!==undefined){
+            lastX.m = event.offsetX;
+            lastY.m = event.offsetY;
+          } else { // Firefox compatibility
+            lastX.m = event.layerX - event.currentTarget.offsetLeft;
+            lastY.m = event.layerY - event.currentTarget.offsetTop;
+          }          
+          drawing = true;
+        }
+
+
+      });
+      element.bind('mousemove touchmove', function(event){
+        if(event.type.startsWith("touch")) {
+          for(var j in event.originalEvent.changedTouches) {
+            var touch = event.originalEvent.changedTouches[j]
+            var i = touch.identifier
+            console.log(touch)
+            if(lastX[i]) {
+              var x = event.currentTarget.offsetLeft
+              var y = event.currentTarget.offsetTop
+              draw(lastX[i]-x, lastY[i]-y, touch.pageX-x, touch.pageY-y)
+            }
+            lastX[i] = touch.pageX
+            lastY[i] = touch.pageY
+          }
+        } else {
+          if(drawing){
+            // get current mouse position
+            if(event.offsetX!==undefined){
+              currentX = event.offsetX;
+              currentY = event.offsetY;
+            } else {
+              currentX = event.layerX - event.currentTarget.offsetLeft;
+              currentY = event.layerY - event.currentTarget.offsetTop;
+            }
+
+            draw(lastX.m, lastY.m, currentX, currentY);
+
+            // set current coordinates to last one
+            lastX.m = currentX;
+            lastY.m = currentY;
+          }          
+        }
+
+      });
+      element.bind('mouseup touchend', function(event){
+        if(event.type.startsWith("touch")) {
+          for(var j in event.originalEvent.changedTouches) {
+            var touch = event.originalEvent.changedTouches[j]
+            var i = touch.identifier
+
+            console.log("Stopping "+i)
+            lastX[i] = 0
+            lastY[i] = 0
+          }
+        } else {
+          drawing = false;
+        }
+      });
+
+      // canvas reset
+      function reset(){
+       element[0].width = element[0].width; 
+      }
+
+      function draw(lX, lY, cX, cY){
+        console.log(~~lX,~~lY,~~cX,~~cY)
+        ctx.beginPath();
+        // line from
+        ctx.moveTo(~~lX,~~lY);
+        // to
+        ctx.lineTo(~~cX,~~cY);
+        // color
+        ctx.strokeStyle = "#000";
+        // draw it
+        ctx.stroke();
+      }
+    }
+  };
 });
 
 
