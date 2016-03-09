@@ -1,4 +1,5 @@
 CACHE MANIFEST
+CACHE:
 /jquery.min.js
 /angular.min.js
 /angular-route.min.js
@@ -23,5 +24,6 @@ NETWORK:
 /api/matches/*
 /api/events
 /api/teams
+*
 
 #v0.0.16
