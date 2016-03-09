@@ -79,6 +79,36 @@ td.label {
   background: #faa;
 }
 
+.notifications {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  width: 200px;
+  height: auto;
+  margin: auto;
+}
+
+.notifications .notification {
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  width: 200px auto;
+  padding: 10px;
+  margin-top: 5px;
+  animation: fadein 0.5s 1;
+  border-radius: 10px;
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 nav .tab {
   width: 200px;
   text-align: center;

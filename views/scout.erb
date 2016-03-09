@@ -38,7 +38,7 @@
             <option val='Blue2'>Blue2</option>
             <option val='Blue3'>Blue3</option>
           </select>
-          <input type='submit' value='Update' />
+          <input type='submit' value='Update' ng-hide='updating'/>
         </form>
       </div>
       <div style='display: inline-block; height: 120px; width: 200px;'>
@@ -77,6 +77,12 @@
     <div ng-include="'scout/_online.html'"></div>
     <div class='banner team' label='{{scoutSide}}'>
       {{scoutSide}}
+    </div>
+
+    <div class='notifications'>
+      <div class='notification' ng-repeat='note in notifications'>
+        {{note.msg}}
+      </div>
     </div>
     
     <img id='halffieldimg' src='halffield.png' style='display: none; position: fixed; top: -9999; left: -9999;' />
