@@ -204,13 +204,6 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
         })
       })
     })
-
-    /*$http.get('teams.php').success(function(data){
-
-      console.log("Got teams")
-      
-      data.teams.forEach($scope.handleTeam)
-    })*/
   }
 
 
@@ -243,36 +236,6 @@ app.controller('OverviewCtrl', function($scope, $location, $mdToast, $cookies, $
   if(!$scope.lastMatchData.length) {
     //$scope.updateMatchData();
   }
-
-  /*$scope.pie = {
-    type: 'PieChart'
-  }
-
-  $scope.pie.data = {"cols": [
-        {id: "t", label: "Topping", type: "string"},
-        {id: "s", label: "Slices", type: "number"}
-    ], "rows": [
-        {c: [
-            {v: "Mushrooms"},
-            {v: 3},
-        ]},
-        {c: [
-            {v: "Olives"},
-            {v: 31}
-        ]},
-        {c: [
-            {v: "Zucchini"},
-            {v: 1},
-        ]},
-        {c: [
-            {v: "Pepperoni"},
-            {v: 2},
-        ]}
-    ]};
-
-    $scope.pie.options = {
-        'legend': 'none'
-    };*/
 
 });
 

@@ -140,18 +140,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     $http.get('/api/matches/'+$scope._eventCode+'/').
       success(function(resp) {
         if($scope._eventCode != $scope.eventCode) {
-          var cookies = $cookies.getAll()
-          for(var key in cookies) {
-            if(key.startsWith("scout_"))
-              $cookies.remove(key)
-          }
-          $cookies.remove('scoutedMatches')
-          $scope.scoutedMatches = {}
-          $cookies.remove('currMatch')
-          $scope.currMatch = 0
-          $scope.scout = $scope.getScout()
-
-
+          $scope.clearAll(true)
         }
 
         $scope.matches = resp.Matches.map(function(obj){
@@ -352,6 +341,30 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
       delete $scope.scoutedTeams[$scope.pitQueue[num]];
       $cookies.putObject('scoutedTeams', $scope.scoutedTeams)
       $scope.notify("Cleared "+$scope.pitQueue[num])
+    }
+  }
+
+  $scope.clearData = function(shouldClear) {
+    if(!shouldClear)
+      shouldClear = confirm('Clear All Data?')
+    if(shouldClear) {
+      var cookies = $cookies.getAll()
+      for(var key in cookies) {
+        if(key.startsWith('scout_') || key.startsWith("pit_")) {
+          console.log(key)
+          $cookies.remove(key)
+        }
+      }
+      $cookies.remove('scoutedMatches')
+      $scope.scoutedMatches = {}
+      $cookies.remove('currMatch')
+      $scope.currMatch = 0
+      $cookies.remove('pitQueue')
+      $scope.pitQueue = []
+      $cookies.remove('scoutedTeams')
+      $scope.scoutedTeams = {}
+      $scope.currTeam = 0
+      $cookies.remove('currTeam')
     }
   }
 
