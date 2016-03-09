@@ -99,6 +99,7 @@ get '/stats.appcache' do
   }*"\n"
 
   """CACHE MANIFEST
+CACHE:
 /angular-material.min.css
 /icons.woff2
 /icons.css
