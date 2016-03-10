@@ -99,6 +99,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope._scoutSide = $scope.scoutSide = $cookies.get('scoutSide') || ''
 
   $scope.currTab = $cookies.get('currTab') || 'pit'
+  $scope.path = []
 
   $scope.matches = $cookies.getObject('matches') || []
   $scope.scoutedMatches = $cookies.getObject('scoutedMatches') || {}
@@ -118,6 +119,12 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $http.get('/events').success(function(resp){
     $scope.events = resp.Events
+  })
+
+  $scope.words = []
+
+  $http.get('/words').success(function(resp){
+    $scope.words = resp
   })
 
   $http.get('/api/teams?eventCode='+$scope.eventCode).success(function(resp){
@@ -406,20 +413,35 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
 });
 
-app.directive("drawing", function(){
+app.directive("drawing", function($cookies){
   return {
     restrict: "A",
     link: function(scope, element){
       var ctx = element[0].getContext('2d');
-      ctx.canvas.width = element[0].width
-      ctx.canvas.height = element[0].height
+      console.log(element[0].width,element[0].height,ctx.canvas.width, ctx.canvas.height)
+      ctx.canvas.width = 200
+      ctx.canvas.height = 200
       // variable that decides if something should be drawn on mousemove
       var drawing = false;
 
       // the last coordinates before the current move
       var lastX = {};
       var lastY = {};
-      $scope.path = []
+      scope.path = []
+      doodleEnded = false
+
+      function endDoodle() {
+        if(!scope.words[scope.currMatch])
+          return;
+      
+        if(!doodleEnded) {
+          doodleEnded = true
+          scope.notify('Ended doodle of '+(scope.words[scope.currMatch] || 'n/a'))
+
+          console.log('match', $cookies.get('currMatch'))
+          $cookies.putObject('doodle_'+scope.words[scope.currMatch], scope.path)
+        }
+      }
 
       element.bind('mousedown touchstart', function(event){
         reset()
@@ -429,11 +451,13 @@ app.directive("drawing", function(){
             var i = touch.identifier
             if(i != 0)
               return
-            console.log("Starting "+i)
             
             lastX[i] = touch.pageX
             lastY[i] = touch.pageY
-            $scope.path = [[lastX[i]/ctx.canvas.width, lastY[i]/ctx.canvas.height]]
+            scope.path = [[
+              (lastX[i] - event.currentTarget.offsetLeft)/200,
+              (lastY[i] - event.currentTarget.offsetTop)/200]]
+            doodleEnded = false
           }
         } else {
           if(event.offsetX!==undefined){
@@ -443,8 +467,8 @@ app.directive("drawing", function(){
             lastX.m = event.layerX - event.currentTarget.offsetLeft;
             lastY.m = event.layerY - event.currentTarget.offsetTop;
           }
-          $scope.path = [[lastX.m/ctx.canvas.width, lastY.m/ctx.canvas.height]]
-
+          scope.path = [[lastX.m/200, lastY.m/200]]
+          doodleEnded = false
           drawing = true;
         }
 
@@ -455,17 +479,21 @@ app.directive("drawing", function(){
           for(var j in event.originalEvent.changedTouches) {
             var touch = event.originalEvent.changedTouches[j]
             var i = touch.identifier
-            console.log(touch)
             if(i != 0)
               return
             if(lastX[i]) {
               var x = event.currentTarget.offsetLeft
               var y = event.currentTarget.offsetTop
-              draw(lastX[i]-x, lastY[i]-y, touch.pageX-x, touch.pageY-y)
+              if(scope.path.length < 100) {
+                draw(lastX[i]-x, lastY[i]-y, touch.pageX-x, touch.pageY-y)
+                scope.path.push([(lastX[i]-x)/200, (lastY[i]-y)/200])
+              } else {
+                endDoodle()
+                
+              }
             }
             lastX[i] = touch.pageX
             lastY[i] = touch.pageY
-            $scope.path.push([lastX[i]/ctx.canvas.width, lastY[i]/ctx.canvas.height])
 
           }
         } else {
@@ -479,13 +507,18 @@ app.directive("drawing", function(){
               currentY = event.layerY - event.currentTarget.offsetTop;
             }
 
-            $scope.path.push([currentX/ctx.canvas.width, currentY/ctx.canvas.height])
-            draw(lastX.m, lastY.m, currentX, currentY);
+            if(scope.path.length < 100) {
+              scope.path.push([currentX/200, currentY/200])
+              draw(lastX.m, lastY.m, currentX, currentY);
+              
+            } else {
+              endDoodle()
+            }
 
             // set current coordinates to last one
             lastX.m = currentX;
             lastY.m = currentY;
-          }          
+          }    
         }
 
       });
@@ -497,12 +530,15 @@ app.directive("drawing", function(){
             if(i != 0)
               return
             
-            console.log("Stopping "+i)
             lastX[i] = 0
             lastY[i] = 0
+            endDoodle()
+
           }
         } else {
           drawing = false;
+          endDoodle()
+
         }
       });
 

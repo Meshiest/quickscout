@@ -15,6 +15,7 @@ set :bind, '0.0.0.0'
 set :port, 8080
 
 Dir.mkdir 'public/data' unless File.exists? 'public/data'
+Dir.mkdir 'public/doodles' unless File.exists? 'public/doodles'
 
 def api path
   return `curl #{$server}#{path} -H "Authorization: Basic #{$token}" -H "accept: application/json"`
@@ -96,6 +97,22 @@ get '/data' do
   Dir["public/data/*"].map{|l|l[/\/data\/.*$/]}.to_json
 end
 
+get '/doodles' do
+  i = 0
+  cookies.each do |k, v|
+    if /^doodle_/ =~ k && !cookies['updoodle_'+k]
+      i += 1
+      puts k[7..-1]
+      cookies['updoodle_'+k] = true
+      open("public/doodles/#{k[7..-1]} #{Time.now.to_i} #{i}.json",'w'){|f|
+        f << v
+      }
+    end
+  end
+  Dir["public/doodles/*"].map{|l|l[/\/doodles\/.*$/]}.to_json
+end
+
+
 $startTime = Time.now.to_f
 
 get '/stats.appcache' do
@@ -158,6 +175,7 @@ CACHE:
 /scout/tab_data.html
 /scout/tab_events.html
 /scout/tab_teams.html
+/scout/tab_doodle.html
 /events
 /words
 
