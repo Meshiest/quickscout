@@ -11,10 +11,15 @@
 
 
     <table>
-      <tr ng-repeat='team in teamList' ng-click='setPath("/team/"+team.teamNumber)'>
+      <tr ng-repeat='team in teamList'>
+        <td>
+          <button ng-click='toggleSelected(team.teamNumber)'>
+            {{selectedTeams.indexOf(team.teamNumber) > -1 ? '&check;' : '&cross;'}}
+          </button>
+        </td>
         <td class='label' style='font-weight: bold;'>{{team.teamNumber}}</td>
         <td>{{teams[team.teamNumber].pit.main ? '&check;' : ''}}</td>
-        <td>{{team.nameShort}}</td>
+        <td ng-click='setPath("/team/"+team.teamNumber)'>{{team.nameShort}}</td>
       </tr>
     </table>
 

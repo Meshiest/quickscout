@@ -277,6 +277,13 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     $cookies.putObject('scoutedTeams', $scope.scoutedTeams)
   }
 
+  $scope.uploadDoodles = function(){
+    $http.get('/doodles').success(function(){
+      $scope.notify("Updoodled Successfully")
+    }).error(function(){
+      $scope.notify("Couldn't updoodle")
+    })
+  }
 
   $scope.sendData = function() {
     if(!$scope.events)

@@ -116,6 +116,16 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
       $location.path(path)
   }
 
+  $scope.selectedTeams = []
+
+  $scope.toggleSelected = function(num) {
+    if($scope.selectedTeams.indexOf(num) > -1) {
+      $scope.selectedTeams.splice($scope.selectedTeams.indexOf(num), 1)
+    } else {
+      $scope.selectedTeams.push(num)
+    }
+  }
+
   $scope.teams = {}
   $scope.tournament = {
     matches: [],
@@ -257,7 +267,6 @@ app.controller('OverviewCtrl', function($scope, $location, $mdToast, $cookies, $
 app.controller('TeamCtrl', function($scope, $routeParams, $location){
   console.log($routeParams.id)
   $scope.teamNumber = $routeParams.id
-  $scope.selectedTeams = []
 
   $scope.defenses = {
     'port': 'Portcullis',
