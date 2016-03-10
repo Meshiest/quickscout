@@ -135,7 +135,6 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope.setCurrMatch = function(num) {
     num = Math.min($scope.matches.length-1, Math.max(0, num))
     $scope.currMatch = num;
-    var match = $scope.matches[num][0]
     $scope.scout = $scope.getScout()
     $cookies.put('currMatch', num)
     var list = $('#matchListDiv');
