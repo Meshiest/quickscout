@@ -9,11 +9,13 @@ require 'uri'
 $server = 'https://frc-api.firstinspires.org/v2.0/'+Time.now.year.to_s+'/'
 
 $token = open('frcapi').read
+$dict = open('dictionary.txt').read.split("\n").shuffle
 
 set :bind, '0.0.0.0'
 set :port, 8080
 
 Dir.mkdir 'public/data' unless File.exists? 'public/data'
+Dir.mkdir 'public/doodles' unless File.exists? 'public/doodles'
 
 def api path
   return `curl #{$server}#{path} -H "Authorization: Basic #{$token}" -H "accept: application/json"`
@@ -45,6 +47,10 @@ end
 
 get '/scout' do
   erb :scout
+end
+
+get '/words' do
+  return $dict[0...100].to_json
 end
 
 post '/match' do
@@ -91,6 +97,22 @@ get '/data' do
   Dir["public/data/*"].map{|l|l[/\/data\/.*$/]}.to_json
 end
 
+get '/doodles' do
+  i = 0
+  cookies.each do |k, v|
+    if /^doodle_/ =~ k && !cookies['updoodle_'+k]
+      i += 1
+      puts k[7..-1]
+      cookies['updoodle_'+k] = true
+      open("public/doodles/#{k[7..-1]} #{Time.now.to_i} #{i}.json",'w'){|f|
+        f << v
+      }
+    end
+  end
+  Dir["public/doodles/*"].map{|l|l[/\/doodles\/.*$/]}.to_json
+end
+
+
 $startTime = Time.now.to_f
 
 get '/stats.appcache' do
@@ -133,5 +155,39 @@ FALLBACK:
 
 NETWORK:
 *
+"""
+end
+
+get '/scout/scout.appcache' do
+  headers['Content-Type'] = 'text/cache-manifest'
+  """CACHE MANIFEST # Started: #{$startTime}
+CACHE:
+/jquery.min.js
+/angular.min.js
+/angular-route.min.js
+/angular-cookies.min.js
+/halffield.png
+/scout/app.js
+/scout/style.css
+/scout
+/scout/tab_pit.html
+/scout/tab_match.html
+/scout/tab_data.html
+/scout/tab_events.html
+/scout/tab_teams.html
+/scout/tab_doodle.html
+/events
+/words
+
+FALLBACK:
+/scout/_online.html /scout/_offline.html
+/api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/
+/api/teams /api/teams
+
+NETWORK:
+/match
+/pit
+*
+
 """
 end
