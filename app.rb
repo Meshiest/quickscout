@@ -163,13 +163,12 @@ CACHE:
 
 FALLBACK:
 /scout/_online.html /scout/_offline.html
+/api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/
+/api/teams /api/teams
 
 NETWORK:
 /match
 /pit
-/api/matches/*
-/api/events
-/api/teams
 *
 
 """

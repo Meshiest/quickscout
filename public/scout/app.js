@@ -411,23 +411,29 @@ app.directive("drawing", function(){
     restrict: "A",
     link: function(scope, element){
       var ctx = element[0].getContext('2d');
-
+      ctx.canvas.width = element[0].width
+      ctx.canvas.height = element[0].height
       // variable that decides if something should be drawn on mousemove
       var drawing = false;
 
       // the last coordinates before the current move
       var lastX = {};
       var lastY = {};
+      $scope.path = []
 
       element.bind('mousedown touchstart', function(event){
+        reset()
         if(event.type.startsWith("touch")) {
           for(var j in event.originalEvent.changedTouches) {
             var touch = event.originalEvent.changedTouches[j]
             var i = touch.identifier
+            if(i != 0)
+              return
             console.log("Starting "+i)
             
             lastX[i] = touch.pageX
             lastY[i] = touch.pageY
+            $scope.path = [[lastX[i]/ctx.canvas.width, lastY[i]/ctx.canvas.height]]
           }
         } else {
           if(event.offsetX!==undefined){
@@ -436,7 +442,9 @@ app.directive("drawing", function(){
           } else { // Firefox compatibility
             lastX.m = event.layerX - event.currentTarget.offsetLeft;
             lastY.m = event.layerY - event.currentTarget.offsetTop;
-          }          
+          }
+          $scope.path = [[lastX.m/ctx.canvas.width, lastY.m/ctx.canvas.height]]
+
           drawing = true;
         }
 
@@ -448,6 +456,8 @@ app.directive("drawing", function(){
             var touch = event.originalEvent.changedTouches[j]
             var i = touch.identifier
             console.log(touch)
+            if(i != 0)
+              return
             if(lastX[i]) {
               var x = event.currentTarget.offsetLeft
               var y = event.currentTarget.offsetTop
@@ -455,6 +465,8 @@ app.directive("drawing", function(){
             }
             lastX[i] = touch.pageX
             lastY[i] = touch.pageY
+            $scope.path.push([lastX[i]/ctx.canvas.width, lastY[i]/ctx.canvas.height])
+
           }
         } else {
           if(drawing){
@@ -467,6 +479,7 @@ app.directive("drawing", function(){
               currentY = event.layerY - event.currentTarget.offsetTop;
             }
 
+            $scope.path.push([currentX/ctx.canvas.width, currentY/ctx.canvas.height])
             draw(lastX.m, lastY.m, currentX, currentY);
 
             // set current coordinates to last one
@@ -481,7 +494,9 @@ app.directive("drawing", function(){
           for(var j in event.originalEvent.changedTouches) {
             var touch = event.originalEvent.changedTouches[j]
             var i = touch.identifier
-
+            if(i != 0)
+              return
+            
             console.log("Stopping "+i)
             lastX[i] = 0
             lastY[i] = 0
