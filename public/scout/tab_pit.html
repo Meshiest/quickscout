@@ -67,14 +67,70 @@
       </select>
     </td>
   </tr>
+  <tr>
+    <td class='label'>Language</td>
+    <td>
+      <select ng-model='scout.main.language'>
+        <option value='java'>Java</option>
+        <option value='cpp'>C++</option>
+        <option value='labview'>Labview</option>
+        <option value='other'>Other</option>
+      </select>
+    </td>
+  </tr>
 </table>
+
 
 <textarea ng-model='scout.main.comment' placeholder='Comment on Robot'>
 </textarea>
 
 <h3>Teleoperated</h3>
 
+<input type='checkbox' ng-model='scout.tele.lowgoal' id='lowgoal'/>
+<label for='lowgoal'>Low Goal</label><br/>
+
+<input type='checkbox' ng-model='scout.tele.closeshot' id='closeshot'/>
+<label for='closeshot'>Close Shot</label><br/>
+
+<input type='checkbox' ng-model='scout.tele.longshot' id='longshot'/>
+<label for='longshot'>Long Shot</label><br/>
+
+<input type='checkbox' ng-model='scout.tele.blockball' id='blockball'/>
+<label for='blockball'>Can Block</label><br/>
+
+<input type='checkbox' ng-model='scout.tele.pushball' id='pushball'/>
+<label for='pushball'>Can Push</label><br/>
+
+<input type='checkbox' ng-model='scout.tele.pickupball' id='pickupball'/>
+<label for='pickupball'>Can Pickup</label><br/>
+
+<input type='checkbox' ng-model='scout.tele.fastball' id='fastball'/>
+<label for='fastball'>Can Pickup Fast</label><br/>
+
+<input type='checkbox' ng-model='scout.tele.hang' id='hang'/>
+<label for='hang'>Can Hang</label><br/>
+
+<input type='checkbox' ng-model='scout.tele.challenge' id='challenge'/>
+<label for='challenge'>Can Challenge</label><br/>
+
+<input type='checkbox' ng-model='scout.tele.onemanbreach' id='onemanbreach'/>
+<label for='onemanbreach'>Can One-man Breach</label><br/>
+
 <h3>Autonomous</h3>
+
+<input type='checkbox' ng-model='scout.auto.driveforward' id='driveforward'/>
+<label for='driveforward'>Drive Forwards</label><br/>
+
+<input type='checkbox' ng-model='scout.auto.crossdefense' id='crossdefense'/>
+<label for='crossdefense'>Cross Defense</label><br/>
+
+<input type='checkbox' ng-model='scout.auto.shoot' id='autoshoot'/>
+<label for='autoshoot'>Shoot</label><br/>
+
+
+<label for='programs'>Program Number</label><br/>
+<input type='number' id='programs' ng-model='scout.auto.prognum' placeholder=''/>
+
 
 <h3>Abilities</h3>
 
