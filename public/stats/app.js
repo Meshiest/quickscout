@@ -27,6 +27,10 @@ app.config(function($routeProvider, $mdThemingProvider){
     templateUrl: 'stats/_threeteams.html',
     controller: 'TeamCtrl'
   }).
+  when('/teams',{
+    templateUrl: 'stats/_teams.html',
+    controller: 'OverviewCtrl'
+  }).
   when('/team/:id', {
     templateUrl: 'stats/_team.html',
     controller: 'TeamCtrl'
@@ -57,6 +61,11 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
       title: 'Overview',
       icon: 'dashboard',
       path: '/overview'
+    },
+    {
+      title: 'Teams',
+      icon: 'list',
+      path: '/teams'
     },
     {
       title: 'Compare',
@@ -135,7 +144,13 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
     }
   }
 
+  $scope.teamList = []
+
   $scope.updateTeams = function(){
+
+    $http.get('/api/teams?eventCode='+$scope.eventCode).success(function(resp){
+      $scope.teamList = resp.teams
+    })
 
     $http.get('/api/matches/'+$scope.eventCode+'/').success(function(data){
       $scope.tournament.matches = data.Matches
@@ -268,6 +283,8 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
   }
 
   $scope.attempts = function(num, defense) {
+    if(!$scope.teams[num])
+      return 'n/a'
     var total = 0
     for(var i in $scope.teams[num].matches) {
       var match = $scope.teams[num].matches[i]
@@ -283,6 +300,9 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
   }
 
   $scope.stuck = function(num, defense) {
+    if(!$scope.teams[num])
+      return 'n/a'
+
     var total = 0
     for(var i in $scope.teams[num].matches) {
       var match = $scope.teams[num].matches[i]
@@ -302,6 +322,9 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
   }
 
   $scope.tortuga = function(num, defense) {
+    if(!$scope.teams[num])
+      return 'n/a'
+
     var total = 0
     for(var i in $scope.teams[num].matches) {
       var match = $scope.teams[num].matches[i]
@@ -321,6 +344,9 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
   }
 
   $scope.opportunities = function(num, defense) {
+    if(!$scope.teams[num])
+      return 'n/a'
+
     var total = 0
     for(var i in $scope.teams[num].matches) {
       var match = $scope.teams[num].matches[i]
@@ -336,6 +362,9 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
   }
 
   $scope.percent = function(num, defense) {
+    if(!$scope.teams[num])
+      return 'n/a'
+
     var opportunities = 0;
     var attempts = 0
 
@@ -374,6 +403,11 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
       $scope.selectedTeams.forEach($scope.showShots)
       return;
     }
+
+    if(!$scope.teams[teamNum])
+      return 'n/a'
+
+
     setTimeout(function(){
       var canvas = document.getElementById('fieldcanvas'+teamNum)
       var ctx = canvas.getContext('2d')
