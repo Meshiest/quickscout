@@ -9,6 +9,7 @@ require 'uri'
 $server = 'https://frc-api.firstinspires.org/v2.0/'+Time.now.year.to_s+'/'
 
 $token = open('frcapi').read
+$dict = open('dictionary.txt').read.split("\n").shuffle
 
 set :bind, '0.0.0.0'
 set :port, 8080
@@ -45,6 +46,10 @@ end
 
 get '/scout' do
   erb :scout
+end
+
+get '/words' do
+  return $dict[0...100].to_json
 end
 
 post '/match' do
@@ -133,5 +138,39 @@ FALLBACK:
 
 NETWORK:
 *
+"""
+end
+
+get '/scout/scout.appcache' do
+  headers['Content-Type'] = 'text/cache-manifest'
+  """CACHE MANIFEST # Started: #{$startTime}
+CACHE:
+/jquery.min.js
+/angular.min.js
+/angular-route.min.js
+/angular-cookies.min.js
+/halffield.png
+/scout/app.js
+/scout/style.css
+/scout
+/scout/tab_pit.html
+/scout/tab_match.html
+/scout/tab_data.html
+/scout/tab_events.html
+/scout/tab_teams.html
+/events
+/words
+
+FALLBACK:
+/scout/_online.html /scout/_offline.html
+
+NETWORK:
+/match
+/pit
+/api/matches/*
+/api/events
+/api/teams
+*
+
 """
 end
