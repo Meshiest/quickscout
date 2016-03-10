@@ -58,7 +58,7 @@
     </select>
   </section>
   <section style='float: right; width: 50%; height: 100%;'>
-    <textarea style="width: 100%; height: 100%; box-sizing: border-box;" placeholder='Auto Comments'></textarea>
+    <textarea style="width: 100%; height: 100%; box-sizing: border-box;" ng-model='scout.auto.comments' placeholder='Auto Comments'></textarea>
   </section>
 </div>
 
@@ -140,6 +140,8 @@
   </section>
 </div>
 
+<textarea style="width: 100%; height: 100%; box-sizing: border-box;" ng-mode='scout.tele.comments' placeholder='Tele Comments'></textarea>
+
 <hr/>
 
 <h3>Ball</h3>
@@ -172,6 +174,8 @@
 
   </section>
 </div>
+
+<textarea style="width: 100%; height: 100%; box-sizing: border-box;" ng-mode='scout.ball.comments' placeholder='Ball Comments'></textarea>
 
 <hr/>
 
@@ -210,6 +214,9 @@
     <label for='scalelift'>Lifted</label><br/>
     
   </section>
+
+<textarea style="width: 100%; height: 100%; box-sizing: border-box;" ng-mode='scout.other.comments' placeholder='Other Comments'></textarea>
+
 </div>
 
 <script>
