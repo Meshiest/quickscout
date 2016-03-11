@@ -203,31 +203,30 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
 
 
     $http.get('/data').success(function(data){
-      $scope.scoutedFiles = data
+      $scope.scoutedFiles = Object.keys(data)
       $scope.numMatches = 0
       $scope.numTeams = 0
-      data.forEach(function(filename){
+      for(var filename in data){
+        var scoutData = data[filename]
         console.log(filename + " pit?: " + filename.startsWith('/data/pit_'))
         if(filename.startsWith('/data/pit_'))
           $scope.numTeams ++;
         else
           $scope.numMatches ++;
 
-        $http.get(filename).success(function(scoutData){
-          filename = filename.split("_")
-          var match = /[^\/]+$/.exec(filename[0])[0], team = /\d+/.exec(filename[1])[0]
-          if(!$scope.teams[team]) {
-            $scope.teams[team] = emptyTeam()
-          }
-          if(match == 'pit') {
-            $scope.teams[team].pit = scoutData
-          } else {
-            scoutData.matchShort = match
-            scoutData.matchName = $scope.match[match].description
-            $scope.teams[team].matches.push(scoutData)
-          }
-        })
-      })
+        filename = filename.split("_")
+        var match = /[^\/]+$/.exec(filename[0])[0], team = /\d+/.exec(filename[1])[0]
+        if(!$scope.teams[team]) {
+          $scope.teams[team] = emptyTeam()
+        }
+        if(match == 'pit') {
+          $scope.teams[team].pit = scoutData
+        } else {
+          scoutData.matchShort = match
+          scoutData.matchName = $scope.match[match].description
+          $scope.teams[team].matches.push(scoutData)
+        }
+      }
     })
   }
 
