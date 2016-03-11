@@ -27,6 +27,7 @@ $forReal = true
 
 get '/toggleReal' do
   $forReal = !$forReal
+  $startTime = Time.now.to_f
   $forReal ? "Enabled" : "Disabled"
 end
 
