@@ -172,6 +172,8 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
         $scope.tournament.scores = data.MatchScores
         $scope.tournament.scores.forEach(function(score) {
           var match = $scope.match[score.matchLevel.substr(0, 4) + " " + score.matchNumber]
+          match.scoreRedFinal = score.Alliances[0].totalPoints
+          match.scoreBlueFinal = score.Alliances[1].totalPoints
           match.picksRed = [
             score.Alliances[0].position2,
             score.Alliances[0].position4,
@@ -223,6 +225,8 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
           $scope.teams[team].pit = scoutData
         } else {
           scoutData.matchShort = match
+          if($scope.match[match])
+            return
           scoutData.matchName = $scope.match[match].description
           $scope.teams[team].matches.push(scoutData)
         }

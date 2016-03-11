@@ -31,6 +31,14 @@ get '/toggleReal' do
   $forReal ? "Enabled" : "Disabled"
 end
 
+$caching = true
+
+get '/toggleCaching' do
+  $caching = !$caching
+  $startTime = Time.now.to_f
+  $caching ? "Enabled" : "Disabled"
+end
+
 get %r{^\/api\/.*$} do
   req = request.path[5..-1]+"?"+params.to_a.map{|p|p*?=}*?&
   content_type :json
@@ -133,7 +141,12 @@ $startTime = Time.now.to_f
 
 get '/stats.appcache' do
   headers['Content-Type'] = 'text/cache-manifest'
-
+  unless $caching
+    """CACHE MANIFEST # #{Time.now.to_f.floor}
+NETWORK:
+*
+    """
+  else
   """CACHE MANIFEST # Started: #{$startTime}
 CACHE:
 /angular-material.min.css
@@ -155,6 +168,7 @@ CACHE:
 /stats/_shots.html
 /stats/_team.html
 /stats/_threeteams.html
+/api/matches/#{cookies['eventCode']}/
 
 FALLBACK:
 # Scouted Data
@@ -162,15 +176,21 @@ FALLBACK:
 
 # Event Code (Changes with cookies)
 /api/scores/#{cookies['eventCode']}/qual /api/scores/#{cookies['eventCode']}/qual
-/api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/ 
 
 NETWORK:
 *
 """
+  end
 end
 
 get '/scout/scout.appcache' do
   headers['Content-Type'] = 'text/cache-manifest'
+  unless $caching
+    """CACHE MANIFEST # #{Time.now.to_f.floor}
+NETWORK:
+*
+    """
+  else
   """CACHE MANIFEST # Started: #{$startTime}
 CACHE:
 /jquery.min.js
@@ -192,13 +212,14 @@ CACHE:
 
 FALLBACK:
 /scout/_online.html /scout/_offline.html
-/api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/
 /api/teams /api/teams
 
 NETWORK:
 /match
+/api/matches/#{cookies['eventCode']}/
 /pit
 *
 
 """
+  end
 end
