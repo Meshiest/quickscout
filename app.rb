@@ -43,7 +43,7 @@ get %r{^\/api\/.*$} do
   req = request.path[5..-1]+"?"+params.to_a.map{|p|p*?=}*?&
   content_type :json
   puts req
-  if(/matches\/txsa/ =~ req and $forReal)
+  if(/matches\/txsa/i =~ req and $forReal)
     open('txsa.json').read
   else
     if $requests[req] && ($requests[req][:time] + 60 > Time.now.to_f) 
@@ -113,12 +113,20 @@ get '/' do
   erb :stats
 end
 
+$lastNum = 0
+$lastData = "{}"
+
 get '/data' do
   output = {}
-  Dir["public/data/*"].each{|path|
-    output[path[/\/data\/.*$/]] = JSON.parse(open(path).read)
-  }
-  output.to_json
+  if Dir["public/data/*"].length == $lastNum
+    $lastData
+  else
+    Dir["public/data/*"].each{|path|
+      output[path[/\/data\/.*$/]] = JSON.parse(open(path).read)
+    }
+    $lastData = output.to_json
+    output.to_json
+  end
 end
 
 get '/doodles' do
@@ -172,7 +180,7 @@ CACHE:
 FALLBACK:
 # Scouted Data
 /data /data # #{Dir["public/data/*"].length} files
-/api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/
+/api/matches/#{cookies['eventCode']}//api/matches/#{cookies['eventCode']}/
 
 # Event Code (Changes with cookies)
 /api/scores/#{cookies['eventCode']}/qual /api/scores/#{cookies['eventCode']}/qual
