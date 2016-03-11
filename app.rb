@@ -23,18 +23,29 @@ end
 
 $requests = {}
 
+$forReal = true
+
+get '/toggleReal' do
+  $forReal = !$forReal
+  $forReal ? "Enabled" : "Disabled"
+end
+
 get %r{^\/api\/.*$} do
   req = request.path[5..-1]+"?"+params.to_a.map{|p|p*?=}*?&
-  puts req
   content_type :json
-  if $requests[req] && ($requests[req][:time] + 60 > Time.now.to_f) 
-    $requests[req][:data]
+  puts req
+  if(/matches\/txsa/ =~ req and $forReal)
+    open('txsa.json').read
   else
-    $requests[req] = {
-      data: api(req),
-      time: Time.now.to_f
-    }
-    $requests[req][:data]
+    if $requests[req] && ($requests[req][:time] + 60 > Time.now.to_f) 
+      $requests[req][:data]
+    else
+      $requests[req] = {
+        data: api(req),
+        time: Time.now.to_f
+      }
+      $requests[req][:data]
+    end
   end
 end
 
@@ -94,7 +105,11 @@ get '/' do
 end
 
 get '/data' do
-  Dir["public/data/*"].map{|l|l[/\/data\/.*$/]}.to_json
+  output = {}
+  Dir["public/data/*"].each{|path|
+    output[path[/\/data\/.*$/]] = JSON.parse(open(path).read)
+  }
+  output.to_json
 end
 
 get '/doodles' do
@@ -117,10 +132,6 @@ $startTime = Time.now.to_f
 
 get '/stats.appcache' do
   headers['Content-Type'] = 'text/cache-manifest'
-
-  data = Dir["public/data/*"].map{|l|
-    [URI.escape(l[/\/data\/.*$/])]*2*' '
-  }*"\n"
 
   """CACHE MANIFEST # Started: #{$startTime}
 CACHE:
@@ -146,8 +157,7 @@ CACHE:
 
 FALLBACK:
 # Scouted Data
-/data /data
-#{data}
+/data /data # #{Dir["public/data/*"].length} files
 
 # Event Code (Changes with cookies)
 /api/scores/#{cookies['eventCode']}/qual /api/scores/#{cookies['eventCode']}/qual
