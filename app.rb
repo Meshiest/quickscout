@@ -168,11 +168,11 @@ CACHE:
 /stats/_shots.html
 /stats/_team.html
 /stats/_threeteams.html
-/api/matches/#{cookies['eventCode']}/
 
 FALLBACK:
 # Scouted Data
 /data /data # #{Dir["public/data/*"].length} files
+/api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/
 
 # Event Code (Changes with cookies)
 /api/scores/#{cookies['eventCode']}/qual /api/scores/#{cookies['eventCode']}/qual
@@ -213,10 +213,10 @@ CACHE:
 FALLBACK:
 /scout/_online.html /scout/_offline.html
 /api/teams /api/teams
+/api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/
 
 NETWORK:
 /match
-/api/matches/#{cookies['eventCode']}/
 /pit
 *
 
