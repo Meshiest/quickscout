@@ -225,10 +225,10 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
           $scope.teams[team].pit = scoutData
         } else {
           scoutData.matchShort = match
+          $scope.teams[team].matches.push(scoutData)
           if(!$scope.match[match])
             continue
           scoutData.matchName = $scope.match[match].description
-          $scope.teams[team].matches.push(scoutData)
         }
       }
     })
