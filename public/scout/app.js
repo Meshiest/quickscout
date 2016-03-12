@@ -20,10 +20,24 @@ app.filter('five', function() {
 });
 
 
-app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout) {
+app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout, $interval) {
   $scope.setPath = function(path) {
       $location.path(path)
   }
+
+  $scope.updateCookies = function() {
+    console.log($scope.scout)
+    switch($scope.currTab) {
+      case 'pit':
+        $scope.saveTeam(true)
+        break
+      case 'match':
+        $scope.saveMatch(true)
+        break
+    }
+  }
+
+  $interval($scope.updateCookies, 1000)
 
   $scope.notify = function(msg) {
     var note = {
@@ -242,15 +256,17 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     $scope.scout.tele.shots.splice(pos, 1)
   }
 
-  $scope.saveMatch = function() {
+  $scope.saveMatch = function(notification) {
     var data = $scope.scout
     var match = $scope.matches[$scope.currMatch]
     data.teamNumber = match[1]
     data.match = match[0]
-    $scope.scoutedMatches[match[0]] = true
-    $cookies.putObject('scoutedMatches', $scope.scoutedMatches)
     $cookies.putObject('scout_'+match[0], data)
-    $scope.notify("Saved "+match[0])
+    if(!notification) {
+      $scope.scoutedMatches[match[0]] = true
+      $cookies.putObject('scoutedMatches', $scope.scoutedMatches)
+      $scope.notify("Saved "+match[0])      
+    }
   }
 
   $scope.clearMatch = function(num) {
@@ -362,7 +378,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     $cookies.putObject('pitQueue', $scope.pitQueue)
   }
 
-  $scope.saveTeam = function() {
+  $scope.saveTeam = function(notification) {
     var data = $scope.scout
     console.log(data)
     var team = data.main.teamNumber
@@ -371,11 +387,13 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     if($scope.pitQueue.indexOf(team) == -1) {
       $scope.addQueue(team)
     }
-    $scope.scoutedTeams[team] = true
-    $cookies.putObject('scoutedTeams', $scope.scoutedTeams)
     $cookies.putObject('pit_'+team, data)
-    $scope.notify("Saved "+team)
-    console.log($cookies.getAll())
+    
+    if(!notification) {
+      $scope.notify("Saved "+team)
+      $scope.scoutedTeams[team] = true
+      $cookies.putObject('scoutedTeams', $scope.scoutedTeams)
+    }
   }
 
   $scope.clearTeam = function(num) {
