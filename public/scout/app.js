@@ -115,7 +115,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $scope.team = {}
   $scope.events = undefined
-  $scope.teams = undefined
+  $scope.teams = []
   $scope.scout = $scope.getScout()
 
   $scope.notifications = []
@@ -134,9 +134,8 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     if(!num)
       num = 1
     console.log("Getting page",num)
-    $scope.teams = []
     $http.get('/api/teams?eventCode='+$scope.eventCode+"&page="+num).success(function(resp){
-      console.log(resp.teams)
+      console.log(resp)
       if(!resp.teams)
         return
       $scope.teams = $scope.teams.concat(resp.teams)

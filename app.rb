@@ -182,6 +182,7 @@ FALLBACK:
 /api/scores/#{cookies['eventCode']}/qual /api/scores/#{cookies['eventCode']}/qual
 
 NETWORK:
+/api/teams
 *
 """
   end
@@ -216,11 +217,11 @@ CACHE:
 
 FALLBACK:
 /scout/_online.html /scout/_offline.html
-/api/teams /api/teams
 /api/schedule/#{cookies['eventCode']}/qual /api/schedule/#{cookies['eventCode']}/qual
 
 NETWORK:
 /match
+/api/teams
 /pit
 *
 

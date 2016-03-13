@@ -156,11 +156,31 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
 
   $scope.teamList = []
 
+  $scope.getTeams = function(num) {
+    if(!num)
+      num = 1
+    console.log("Getting teams page",num)
+    $http.get('/api/teams?eventCode='+$scope.eventCode+"&page="+num).success(function(resp){
+      if(resp.pageCurrent == 1)
+        $scope.teamList = []
+
+      if(!resp.teams)
+        return
+      $scope.teamList = $scope.teamList.concat(resp.teams)
+      resp.teams.forEach(function(team){
+        if(!$scope.teams[team.teamNumber])
+          $scope.teams[team.teamNumber] = emptyTeam()
+
+        $scope.teams[team.teamNumber].meta = team
+      })
+      if(resp.pageCurrent < resp.pageTotal)
+        $scope.getTeams(parseInt(resp.pageCurrent) + 1)
+    })
+  }
+
   $scope.updateTeams = function(){
 
-    $http.get('/api/teams?eventCode='+$scope.eventCode).success(function(resp){
-      $scope.teamList = resp.teams
-    })
+    $scope.getTeams()
 
     $http.get('/api/matches/'+$scope.eventCode+'/').success(function(data){
       $scope.tournament.matches = data.Matches
@@ -210,7 +230,6 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
       $scope.numTeams = 0
       for(var filename in data){
         var scoutData = data[filename]
-        console.log(filename + " pit?: " + filename.startsWith('/data/pit_'))
         if(filename.startsWith('/data/pit_'))
           $scope.numTeams ++;
         else
@@ -408,6 +427,21 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
     low: "#aaf",
     hmiss: "#afa",
     lmiss: "#aaf"
+  }
+
+  $scope.getAvg = function(type, teamNum) {
+    var num = 0
+    if(!$scope.teams[teamNum] || !$scope.teams[teamNum].matches.length)
+      return 'n/a'
+    for(var i in $scope.teams[teamNum].matches) {
+      var match = $scope.teams[teamNum].matches[i]
+      for(var j in match.tele.shots) {
+        var shot = match.tele.shots[j]
+        if(shot.goal == type)
+          num ++
+      }
+    }
+    return Math.floor(num / $scope.teams[teamNum].matches.length * 10 + 0.5)/10
   }
 
   $scope.showShots = function(teamNum, timeout) {
