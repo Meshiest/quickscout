@@ -75,6 +75,8 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
         var team = $scope.pitQueue[$scope.currTeam]
         var scout = $cookies.getObject("pit_"+team) || $scope.emptyPitScout();
         scout.main.teamNumber = team
+        if($scope.team[team])
+          scout.main.teamName = $scope.team[team].nameShort
         return scout
         break;
 
@@ -111,9 +113,10 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope.currTeam = parseInt($cookies.get('currTeam') || '0')
   $timeout(function(){$scope.setCurrTeam($scope.currTeam)}, 500)
 
-  $scope.scout = $scope.getScout()
+  $scope.team = {}
   $scope.events = undefined
   $scope.teams = undefined
+  $scope.scout = $scope.getScout()
 
   $scope.notifications = []
 
@@ -127,9 +130,25 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     $scope.words = resp
   })
 
-  $http.get('/api/teams?eventCode='+$scope.eventCode).success(function(resp){
-    $scope.teams = resp.teams
-  })
+  $scope.getTeams = function(num) {
+    if(!num)
+      num = 1
+    console.log("Getting page",num)
+    $scope.teams = []
+    $http.get('/api/teams?eventCode='+$scope.eventCode+"&page="+num).success(function(resp){
+      console.log(resp.teams)
+      if(!resp.teams)
+        return
+      $scope.teams = $scope.teams.concat(resp.teams)
+      resp.teams.forEach(function(team){
+        $scope.team[team.teamNumber] = team
+      })
+      if(resp.pageCurrent < resp.pageTotal)
+        $scope.getTeams(parseInt(resp.pageCurrent) + 1)
+    })
+  }
+  if($scope.eventCode)
+    $scope.getTeams()
 
 
   $scope.setCurrMatch = function(num) {
@@ -160,7 +179,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $scope.getMatches = function() {
     $scope.updating = true
-    $http.get('/api/matches/'+$scope._eventCode+'/').
+    $http.get('/api/schedule/'+$scope._eventCode+'/qual').
       success(function(resp) {
         $scope.updating = false
         if($scope._eventCode != $scope.eventCode) {
@@ -182,9 +201,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
         $cookies.put('scoutSide', $scope.scoutSide)
         $cookies.putObject('matches', $scope.matches)
 
-        $http.get('/api/teams?eventCode='+$scope.eventCode).success(function(resp){
-          $scope.teams = resp.teams
-        })
+        $scope.getTeams()
 
 
       }).error(function(err) {
@@ -291,9 +308,6 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     Object.keys($scope.scoutedMatches).forEach(function(match){
       if($scope.scoutedMatches[match] == 's' || !$scope.scoutedMatches[match])
         return;
-
-      var obj = $cookies.getObject("scout_"+match)
-      obj.eventCode = $scope.eventCode
       
       $http({
         method: 'POST',
@@ -302,7 +316,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
           'Content-Type': 'application/json'
         },
         params: {
-          scout: JSON.stringify(obj)
+          match: match
         }
       }).
         success(function(resp){
@@ -327,7 +341,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
           'Content-Type': 'application/json'
         },
         params: {
-          scout: JSON.stringify($cookies.getObject("pit_"+team))
+          pit: team
         }
       }).
         success(function(resp){
@@ -450,6 +464,7 @@ app.directive("drawing", function($cookies){
       }
 
       element.bind('mousedown touchstart', function(event){
+        event.preventDefault()
         reset()
         if(event.type.startsWith("touch")) {
           for(var j in event.originalEvent.changedTouches) {
@@ -481,6 +496,7 @@ app.directive("drawing", function($cookies){
 
       });
       element.bind('mousemove touchmove', function(event){
+        event.preventDefault()
         if(event.type.startsWith("touch")) {
           for(var j in event.originalEvent.changedTouches) {
             var touch = event.originalEvent.changedTouches[j]
@@ -529,6 +545,7 @@ app.directive("drawing", function($cookies){
 
       });
       element.bind('mouseup touchend', function(event){
+        event.preventDefault()
         if(event.type.startsWith("touch")) {
           for(var j in event.originalEvent.changedTouches) {
             var touch = event.originalEvent.changedTouches[j]

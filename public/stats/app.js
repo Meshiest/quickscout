@@ -246,7 +246,7 @@ app.controller('OverviewCtrl', function($scope, $location, $mdToast, $cookies, $
   $scope.numScoutedTeams = 0
 
   $scope.updateEventCode = function() {
-    $http.get('/api/matches/'+$scope.eventCode+'/').success(function(resp){
+    $http.get('/api/schedule/'+$scope.eventCode+'/qual').success(function(resp){
       $cookies.put('eventCode', $scope.eventCode)
       location.reload()
     }).error(function(){
