@@ -100,7 +100,7 @@
           {{scout.tele.defenses[i].length}}
         </td>
         <td>
-          <span ng-repeat="(j, try) in lastItems(i, 5)">
+          <span ng-repeat="(j, try) in lastItems(i, 3)">
             <button ng-click='removeAttempt(i, j)'>
               {{try == '1' ? '&check;' : try == '-1' ? '&#9760;' : '&cross;'}}
             </button>
@@ -227,6 +227,7 @@ var img = $('#halffieldimg')[0]
 
 function renderTouch(event) {
   ctx.drawImage(img, 0, 0, 200, 200);
+
   if(event) {
     var x = (event.pageX-canvas.offset().left)
     var y = (event.pageY-canvas.offset().top)

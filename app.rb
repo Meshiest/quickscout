@@ -18,11 +18,15 @@ Dir.mkdir 'public/data' unless File.exists? 'public/data'
 Dir.mkdir 'public/doodles' unless File.exists? 'public/doodles'
 
 def api(path)
-  open("#{$server}#{path}",
-    "User-Agent" => "https://github.com/2468scout/quickscout",
-    "Authorization" => "Basic #{$token}",
-    "accept" => "application/json"
-  ).read
+  begin
+    open("#{$server}#{path}",
+      "User-Agent" => "https://github.com/2468scout/quickscout",
+      "Authorization" => "Basic #{$token}",
+      "accept" => "application/json"
+    ).read
+  rescue
+    return '{}'
+  end
 end
 
 $requests = {}
