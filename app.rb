@@ -18,11 +18,15 @@ Dir.mkdir 'public/data' unless File.exists? 'public/data'
 Dir.mkdir 'public/doodles' unless File.exists? 'public/doodles'
 
 def api(path)
-  open("#{$server}#{path}",
-    "User-Agent" => "https://github.com/2468scout/quickscout",
-    "Authorization" => "Basic #{$token}",
-    "accept" => "application/json"
-  ).read
+  begin
+    open("#{$server}#{path}",
+      "User-Agent" => "https://github.com/2468scout/quickscout",
+      "Authorization" => "Basic #{$token}",
+      "accept" => "application/json"
+    ).read
+  rescue
+    return '{}'
+  end
 end
 
 $requests = {}
@@ -71,15 +75,19 @@ end
 
 post '/match' do
   begin
-    data = JSON.parse(cookies["scout_"+params[:match].to_s] || '')
+    if params[:data]
+      data = JSON.parse(params[:data])
+    else
+      data = JSON.parse(cookies["scout_"+params[:match].to_s] || '')
+    end
     open('public/data/'+data['match']+"_"+data['teamNumber'].to_s+".json",'w'){|f|
-      f << cookies["scout_"+params[:match].to_s]
+      f << data.to_json
     }
     '{"msg":"Success"}'
     status 200
   rescue => e
     puts e
-    status 403
+    status 400
   end
 
 end
@@ -94,7 +102,7 @@ post '/pit' do
     status 200
   rescue => e
     puts e
-    status 403
+    status 400
   end
 
 end
