@@ -2,7 +2,7 @@
   <md-card flex>
     <md-card-title>
       <md-card-title-text>
-        <span class="md-headline">Team {{teamNumber}}</span>
+        <span class="md-headline">{{teamNumber}} - {{teams[teamNumber].meta.nameShort}}</span>
         <span class="md-subhead">An overview of a team</span>
       </md-card-title-text>
     </md-card-title>
@@ -25,7 +25,7 @@
             High Miss
           </md-checkbox>
           <md-checkbox ng-model='showlow' ng-click='showShots(teamNumber)'>
-            High
+            Low
           </md-checkbox>
           <md-checkbox ng-model='showlmiss' ng-click='showShots(teamNumber)'>
             Low Miss
@@ -101,7 +101,7 @@
       <md-card ng-repeat='match in teams[teamNumber].matches'>
         <md-card-title>
           <md-card-title-text>
-            {{match.matchName}}
+            {{match.match}}
           </md-card-title-text>
         </md-card-title>
         <md-content layout-padding>

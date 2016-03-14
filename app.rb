@@ -17,19 +17,15 @@ set :port, 8080
 Dir.mkdir 'public/data' unless File.exists? 'public/data'
 Dir.mkdir 'public/doodles' unless File.exists? 'public/doodles'
 
-def api path
-  return `curl #{$server}#{path} -H "Authorization: Basic #{$token}" -H "accept: application/json"`
+def api(path)
+  open("#{$server}#{path}",
+    "User-Agent" => "https://github.com/2468scout/quickscout",
+    "Authorization" => "Basic #{$token}",
+    "accept" => "application/json"
+  ).read
 end
 
 $requests = {}
-
-$forReal = true
-
-get '/toggleReal' do
-  $forReal = !$forReal
-  $startTime = Time.now.to_f
-  $forReal ? "Enabled" : "Disabled"
-end
 
 $caching = true
 
@@ -40,12 +36,10 @@ get '/toggleCaching' do
 end
 
 get %r{^\/api\/.*$} do
-  req = request.path[5..-1]+"?"+params.to_a.map{|p|p*?=}*?&
-  content_type :json
-  puts req
-  if(/matches\/txsa/i =~ req and $forReal)
-    open('txsa.json').read
-  else
+  begin
+    req = request.path[5..-1]+"?"+params.to_a.map{|p|p*?=}*?&
+    content_type :json
+    puts req
     if $requests[req] && ($requests[req][:time] + 60 > Time.now.to_f) 
       $requests[req][:data]
     else
@@ -55,6 +49,8 @@ get %r{^\/api\/.*$} do
       }
       $requests[req][:data]
     end
+  rescue
+    status 404
   end
 end
 
@@ -75,9 +71,9 @@ end
 
 post '/match' do
   begin
-    data = JSON.parse(params[:scout] || '')
+    data = JSON.parse(cookies["scout_"+params[:match].to_s] || '')
     open('public/data/'+data['match']+"_"+data['teamNumber'].to_s+".json",'w'){|f|
-      f << params[:scout]
+      f << cookies["scout_"+params[:match].to_s]
     }
     '{"msg":"Success"}'
     status 200
@@ -90,9 +86,9 @@ end
 
 post '/pit' do
   begin
-    data = JSON.parse(params[:scout] || '')
+    data = JSON.parse(cookies["pit_"+params[:pit].to_s] || '')
     open('public/data/pit_'+data['main']['teamNumber'].to_s+".json",'w'){|f|
-      f << params[:scout]
+      f << cookies["pit_"+params[:pit].to_s]
     }
     '{"msg":"Success"}'
     status 200
@@ -104,7 +100,7 @@ post '/pit' do
 end
 
 before do
-  if File.exist?('debug')
+  if File.exist?('debug') || !params[:update].nil?
     headers 'Cache-Control' => 'no-cache, must-revalidate'
   end
 end
@@ -122,7 +118,11 @@ get '/data' do
     $lastData
   else
     Dir["public/data/*"].each{|path|
-      output[path[/\/data\/.*$/]] = JSON.parse(open(path).read)
+      begin
+        output[path[/\/data\/.*$/]] = JSON.parse(open(path).read)
+      rescue => e
+        puts "ERROR: #{e}"
+      end
     }
     $lastData = output.to_json
     output.to_json
@@ -180,12 +180,13 @@ CACHE:
 FALLBACK:
 # Scouted Data
 /data /data # #{Dir["public/data/*"].length} files
-/api/matches/#{cookies['eventCode']}//api/matches/#{cookies['eventCode']}/
+/api/schedule/#{cookies['eventCode']}/qual /api/schedule/#{cookies['eventCode']}/qual
 
 # Event Code (Changes with cookies)
 /api/scores/#{cookies['eventCode']}/qual /api/scores/#{cookies['eventCode']}/qual
 
 NETWORK:
+/api/teams
 *
 """
   end
@@ -220,11 +221,11 @@ CACHE:
 
 FALLBACK:
 /scout/_online.html /scout/_offline.html
-/api/teams /api/teams
-/api/matches/#{cookies['eventCode']}/ /api/matches/#{cookies['eventCode']}/
+/api/schedule/#{cookies['eventCode']}/qual /api/schedule/#{cookies['eventCode']}/qual
 
 NETWORK:
 /match
+/api/teams
 /pit
 *
 
