@@ -93,9 +93,11 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
         var match = $scope.matches[$scope.currMatch][0]
         if($cookies.getObject("scout_"+match))
           console.log(match,'has cookie')
+        else if($scope.matchBackup['scout_'+match])
+          console.log(match,'has backup')
         else
           console.log(match,'using empty')
-        return $cookies.getObject("scout_"+match) || $scope.emptyMatchScout()
+        return $cookies.getObject("scout_"+match) || $scope.matchBackup['scout_'+match] || $scope.emptyMatchScout()
         break;
     }
   }
@@ -113,6 +115,16 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $scope.matches = $cookies.getObject('matches') || []
   $scope.scoutedMatches = $cookies.getObject('scoutedMatches') || {}
+  Object.keys($cookies.getAll()).forEach(function(key) {
+    if(key.startsWith('scout_')) {
+      var name = key.split('_')[1]
+      if(!$scope.scoutedMatches[name]) {
+        $scope.scoutedMatches[name] = true
+        $cookies.putObject('scoutedMatches', $scope.scoutedMatches)
+      }
+      
+    }
+  })
   $scope.currMatch = parseInt($cookies.get('currMatch') || '0')
   $timeout(function(){$scope.setCurrMatch($scope.currMatch)}, 500)
 
@@ -120,6 +132,11 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope.scoutedTeams = $cookies.getObject('scoutedTeams') || {}
   $scope.currTeam = parseInt($cookies.get('currTeam') || '0')
   $timeout(function(){$scope.setCurrTeam($scope.currTeam)}, 500)
+
+  $scope.matchBackup = {}
+  $scope.$watch('scout', function(scout) {
+    $scope.matchBackup['scout_'+$scope.matches[$scope.currMatch][0]] = scout
+  }, true)
 
   $scope.team = {}
   $scope.events = undefined
@@ -161,8 +178,10 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     $scope.currMatch = num;
     $scope.scout = $scope.getScout()
     $cookies.put('currMatch', num)
-    if(!$scope.matches.length)
+    if(!$scope.matches.length || !$scope.scout)
       return
+    $scope.scout.match = $scope.matches[num][0]
+    $scope.scout.teamNumber = $scope.matches[num][1]
 
     var list = $('#matchListDiv');
     var next = Math.max(0, num-2)
@@ -240,7 +259,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   }
 
   $scope.lastItems = function(i, num) {
-    if($scope.currTab != 'match')
+    if($scope.currTab != 'match' || !$scope.scout.tele.defenses)
       return
     var data = $scope.scout.tele.defenses[i]
     var out = {}
@@ -273,25 +292,27 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     var data = $scope.scout
     var match = $scope.matches[$scope.currMatch]
     var numTries = numTries || 0
-    data.teamNumber = match[1]
-    data.match = match[0]
-    $scope.scoutedMatches[match[0]] = true
-    $cookies.putObject('scoutedMatches', $scope.scoutedMatches)
     $cookies.putObject('scout_'+match[0], data)
-    if(!$cookies.getObject('scout_'+match[0])) {
-      if(numTries == 0)
-        $scope.notify("Could not save "+match[0], true)
-      if(numTries < 3)
-        $scope.tryClear(numTries)
-      else
-        $scope.notify('Try again...')
-    } else
-      $scope.notify("Saved "+match[0])
+    $scope.matchBackup['scout_'+match[0]] = data
+    $timeout(function(){
+      if(!$cookies.getObject('scout_'+match[0])) {
+        if(numTries == 0)
+          $scope.notify("Couldn't save "+match[0], true)
+        if(numTries < 5) {
+          $scope.tryClear(numTries)
+        }
+        else
+          $scope.notify('Try again...')
+      } else {
+        $scope.scoutedMatches[match[0]] = true
+        $cookies.putObject('scoutedMatches', $scope.scoutedMatches)
+        $scope.notify("Saved "+match[0])
+      }
+    }, 50)
   }
 
   $scope.tryClear = function (numTries) {
     var keys = Object.keys($scope.scoutedMatches)
-    console.log()
     var key = keys[0];
     for(var i = 0; i < keys.length; i++) {
       if(keys[i] == 's') {
@@ -299,6 +320,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
         break;
       }
     }
+    $scope.matchBackup[key] = $cookies.getObject('scout_'+key)
     delete $scope.scoutedMatches[key]
     $cookies.putObject('scoutedMatches', $scope.scoutedMatches)
     $cookies.remove('scout_'+key)
@@ -337,34 +359,44 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     })
   }
 
-  $scope.sendData = function() {
-    if(!$scope.events)
+  $scope.sendMatch = function(match){
+    var params = {
+      match: match
+    }
+    var cookie = $cookies.getObject('scout_'+match)
+    var backup = $scope.matchBackup['scout_'+match]
+
+    if($scope.scoutedMatches[match] == 's' || (!cookie && !backup))
       return;
 
-    Object.keys($scope.scoutedMatches).forEach(function(match){
-      if($scope.scoutedMatches[match] == 's' || !$scope.scoutedMatches[match])
-        return;
-      
-      $http({
-        method: 'POST',
-        url: '/match',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        params: {
-          match: match
-        }
+    if(backup && !cookie) {
+      params.data = backup
+    }
+    
+    $http({
+      method: 'POST',
+      url: '/match',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      params: params
+    }).
+      success(function(resp){
+        console.log("Successfully sent "+match)
+        $scope.scoutedMatches[match] = 's'
+        $cookies.putObject('scoutedMatches', $scope.scoutedMatches)
       }).
-        success(function(resp){
-          console.log("Successfully sent "+match)
-          $scope.scoutedMatches[match] = 's'
-          $cookies.putObject('scoutedMatches', $scope.scoutedMatches)
-        }).
-        error(function(resp){
-          console.log("Error in sending "+match)
-        })
+      error(function(resp){
+        console.log("Error in sending "+match)
+      })
 
-    })
+  }
+
+  $scope.sendData = function() {
+    if(!$scope.team.length)
+      return;
+
+    Object.keys($scope.scoutedMatches).forEach($scope.sendMatch)
 
     Object.keys($scope.scoutedTeams).forEach(function(team){
       if($scope.scoutedTeams[team] == 's' || !$scope.scoutedTeams[team])

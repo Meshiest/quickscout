@@ -4,7 +4,7 @@
 <button ng-click='saveMatch()'>Save</button>
 <button ng-click='setCurrMatch(currMatch+1)'>Next Match</button>
 <button ng-click='clearMatch(currMatch)'>Clear Match</button>
-<button ng-click='sendData()'>Send Data</button>
+<button ng-if="scoutedMatches[matches[currMatch][0]]!='s'" ng-click='sendMatch(matches[currMatch][0])'>Send Match</button>
 
 
 <h3>Defenses Against</h3>
