@@ -182,8 +182,8 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
 
     $scope.getTeams()
 
-    $http.get('/api/matches/'+$scope.eventCode+'/').success(function(data){
-      $scope.tournament.matches = data.Matches
+    $http.get('/api/schedule/'+$scope.eventCode+'/').success(function(data){
+      $scope.tournament.matches = data.Schedule
       $scope.tournament.matches.forEach(function(match) {
         $scope.match[match.description.substr(0, 4) + " " + match.description.split(' ')[1]] = match
       })

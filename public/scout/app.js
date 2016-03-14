@@ -135,7 +135,6 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
       num = 1
     console.log("Getting page",num)
     $http.get('/api/teams?eventCode='+$scope.eventCode+"&page="+num).success(function(resp){
-      console.log(resp)
       if(!resp.teams)
         return
       $scope.teams = $scope.teams.concat(resp.teams)
@@ -155,9 +154,12 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     $scope.currMatch = num;
     $scope.scout = $scope.getScout()
     $cookies.put('currMatch', num)
+    if(!$scope.matches.length)
+      return
+
     var list = $('#matchListDiv');
     var next = Math.max(0, num-2)
-    list.scrollTop( 
+    list.scrollTop(
       list.scrollTop() + $($('#matchListDiv table tbody').children()[next]).offset().top - list.offset().top
     )
   }
@@ -185,7 +187,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
           $scope.clearData(true)
         }
 
-        $scope.matches = resp.Matches.map(function(obj){
+        $scope.matches = resp.Schedule.map(function(obj){
           var team = obj.Teams[0].teamNumber
           for(var i = 0; i < obj.Teams.length; i++) {
             if(obj.Teams[i].station == $scope._scoutSide) {

@@ -36,17 +36,21 @@ get '/toggleCaching' do
 end
 
 get %r{^\/api\/.*$} do
-  req = request.path[5..-1]+"?"+params.to_a.map{|p|p*?=}*?&
-  content_type :json
-  puts req
-  if $requests[req] && ($requests[req][:time] + 60 > Time.now.to_f) 
-    $requests[req][:data]
-  else
-    $requests[req] = {
-      data: api(req),
-      time: Time.now.to_f
-    }
-    $requests[req][:data]
+  begin
+    req = request.path[5..-1]+"?"+params.to_a.map{|p|p*?=}*?&
+    content_type :json
+    puts req
+    if $requests[req] && ($requests[req][:time] + 60 > Time.now.to_f) 
+      $requests[req][:data]
+    else
+      $requests[req] = {
+        data: api(req),
+        time: Time.now.to_f
+      }
+      $requests[req][:data]
+    end
+  rescue
+    status 404
   end
 end
 
