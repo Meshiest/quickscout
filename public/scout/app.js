@@ -285,10 +285,15 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     if(!$scope.clickX && !$scope.clickY) {
       return;
     }
+
     if($scope.flipField) {
-      $scope.clickX = Math.floor((1 - $scope.clickX)*1000)/1000
-      $scope.clickY = Math.floor((1 - $scope.clickY)*1000)/1000
+      $scope.clickX = 1 - $scope.clickX
+      $scope.clickY = 1 - $scope.clickY
     }
+
+    $scope.clickX = Math.round(($scope.clickX)*1000)/1000
+    $scope.clickY = Math.round(($scope.clickY)*1000)/1000
+
 
     $scope.scout.tele.shots.push({
       goal: goal,
