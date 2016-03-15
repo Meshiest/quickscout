@@ -215,6 +215,7 @@ CACHE:
 /angular-route.min.js
 /angular-cookies.min.js
 /halffield.png
+/halffield2.png
 /scout/app.js
 /scout/style.css
 /scout

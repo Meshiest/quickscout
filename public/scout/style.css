@@ -2,21 +2,40 @@ html, body {
   margin: 0;
   padding: 0;
   text-align: center;
+  font-family: Tahoma, Helvetica, arial, sans-serif;
 }
 
-button, input, textarea, select,
+button, .button, input, textarea, select,
 input[type='text'],input[type='number'], input[type='submit'] {
   -webkit-border-radius: 0;
   border-radius: 0;
+  border: thin solid black;
 }
 
-button, input[type='submit'] {
-  -webkit-border-radius: 0;
-  border-radius: 0;
+button, .button, input[type='submit'] {
+  background: #ddd;
+}
+
+.iconButton {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
 }
 
 #eventCode {
   text-transform: lowercase;
+}
+
+td select {
+  width: 100%;
+}
+
+td input[type='text'], td input[type='number'] {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /*
@@ -38,6 +57,11 @@ input, textarea {
   color: #900;
 }
 
+.dataList {
+  width: 100%;
+  list-style: none;
+}
+
 .dataExample {
   background-color: #eee;
   border-radius: 4px;
@@ -51,7 +75,7 @@ input, textarea {
 }
 
 tr.selected {
-  background: #aaa;
+  background: #aaa !important;
 }
 
 li.selected {
@@ -139,22 +163,29 @@ nav .tab {
   width: 200px;
   text-align: center;
   height: 30px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
   padding: 5px;
   margin-left: 5px;
   margin-right: 5px;
   background: #eee;
 }
 
+nav .tab.selected {
+  text-decoration: underline;
+}
+
 #matchListDiv {
   overflow-y: auto;
   width: 200px;
   height: 100px;
+  border: thin solid black;
 }
 
 #matchListDiv table {
   border-collapse: separate;
   border-spacing: 0;
   width: 100%;
+}
+
+#matchListDiv table tr:nth-child(2n) {
+  background: #f5f5f5;
 }
