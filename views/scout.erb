@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app='app' <%= File.exists?("debug") ? '' : 'manifest="scout/scout.appcache"'%>>
+<html ng-app='app' manifest="scout/scout.appcache">
   <head>
     <title>Scout</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,8 +15,7 @@
 
     <div class='content'>
       <div style='display: inline-block;'>
-        <h3>Data: </h3>
-        <ul>
+        <ul class='dataList'>
           <li ng-class="{'strike': !matches.length}">
             Matches <span class='dataExample' ng-if='matches.length'>{{matches.length}} matches</span>
           </li>
@@ -38,7 +37,7 @@
             <option val='Blue2'>Blue2</option>
             <option val='Blue3'>Blue3</option>
           </select>
-          <input type='submit' value='Select' ng-hide='updating'/>
+          <button type='submit' ng-hide='updating'>Select</button>
         </form>
       </div>
       <div style='display: inline-block; height: 120px; width: 200px;'>
@@ -55,19 +54,44 @@
           </table>
         </section>
         <nav style='text-align: center; width: 200px;'>
-          <button ng-click='setCurrMatch(0)'>|&lt;</button>
-          <button ng-click='setCurrMatch(currMatch-1)'>&lt;</button>
-          <button ng-click='setCurrMatch(currMatch+1)'>&gt;</button>
-          <button ng-click='setCurrMatch(matches.length-1)'>&gt;|</button>
+          <button class='iconButton' ng-click='setCurrMatch(0)'>|&lt;</button>
+          <button class='iconButton' ng-click='setCurrMatch(currMatch-1)'>&lt;</button>
+          <button class='iconButton' ng-click='setCurrMatch(currMatch+1)'>&gt;</button>
+          <button class='iconButton' ng-click='setCurrMatch(matches.length-1)'>&gt;|</button>
         </nav>
       </div>
 
       <nav style='margin-top: 1em;'>
-        <span class='tab' ng-click='setTab("pit")'>Pit</span>
-        <span class='tab' ng-click='setTab("match")'>Match</span>
-        <span class='tab' ng-click='setTab("data")'>Data</span>
-        <span class='tab' ng-if='events' ng-click='setTab("events")'>Events</span>
-        <span class='tab' ng-if='teams.length' ng-click='setTab("teams")'>Teams</span>
+        <span class='tab'
+          ng-class="{selected:currTab=='pit'}"
+          ng-click='setTab("pit")'
+          >
+          Pit
+        </span>
+        <span class='tab'
+          ng-class="{selected:currTab=='match'}"
+          ng-click='setTab("match")'
+          >
+          Match
+        </span>
+        <span class='tab'
+          ng-class="{selected:currTab=='data'}"
+          ng-click='setTab("data")'
+          >
+          Data
+        </span>
+        <span class='tab'
+          ng-class="{selected:currTab=='events'}"
+          ng-if='events' ng-click='setTab("events")'
+          >
+          Events
+        </span>
+        <span class='tab'
+          ng-class="{selected:currTab=='teams'}"
+          ng-if='teams.length' ng-click='setTab("teams")'
+          >
+          Teams
+        </span>
       </nav>
 
       <div class='scoutcontainer' ng-include="'/scout/tab_'+currTab+'.html'">
@@ -77,6 +101,13 @@
     <div ng-include="'scout/_online.html'"></div>
     <div class='banner team' label='{{scoutSide}}'>
       {{scoutSide}}
+      <div ng-if='currTab == "match"'>
+        {{matches[currMatch].join(" ")}}
+      </div>
+      <div ng-if='currTab == "pit"'>
+        Team {{pitQueue[currTeam]}}
+      </div>
+
     </div>
 
     <div class='notifications'>
@@ -86,8 +117,9 @@
     </div>
     
     <img id='halffieldimg' src='halffield.png' style='display: none; position: fixed; top: -9999; left: -9999;' />
+    <img id='halffield2img' src='halffield2.png' style='display: none; position: fixed; top: -9999; left: -9999;' />
 
-    <div style='width: 100%; text-align: center;'>v0.1.9</div>
+    <div style='width: 100%; text-align: center;'>v0.1.10</div>
 
 
   </body>

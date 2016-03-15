@@ -22,6 +22,10 @@ app.filter('five', function() {
 
 app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout) {
 
+  if(navigator.userAgent.match(/iPad/i)) {
+    $('body').css('zoom','170%')
+  }
+
   $scope.setPath = function(path) {
       $location.path(path)
   }
@@ -47,7 +51,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $scope.emptyMatchScout = function(){
     return {
-      defenses: {},
+      defenses: {1:'low'},
       auto: {},
       tele: {
         defenses: {1:[],2:[],3:[],4:[],5:[]},
@@ -143,6 +147,12 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope.teams = []
   $scope.scout = $scope.getScout()
 
+  $scope.flipField = $cookies.get('flipField') == 'true'
+  $scope.toggleField = function() {
+    $scope.flipField = !$scope.flipField
+    $cookies.put('flipField', $scope.flipField)
+    renderTouch()
+  }
 
   $http.get('/events').success(function(resp){
     $scope.events = resp.Events
@@ -241,8 +251,9 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $scope.imageClick = function($event) {
     var element = $('#fieldcanvas')
-    var x = $event.offsetX / element.width()
-    var y = $event.offsetY / element.height()
+    var zoom = $('body').css('zoom')
+    var x = $event.offsetX / zoom / element.width()
+    var y = $event.offsetY / zoom / element.height()
     console.log(Math.floor(x*1000)/10, Math.floor(y*1000)/10)
     $scope.clickX = x
     $scope.clickY = y
@@ -273,6 +284,10 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope.addShot = function(goal) {
     if(!$scope.clickX && !$scope.clickY) {
       return;
+    }
+    if($scope.flipField) {
+      $scope.clickX = Math.floor((1 - $scope.clickX)*1000)/1000
+      $scope.clickY = Math.floor((1 - $scope.clickY)*1000)/1000
     }
 
     $scope.scout.tele.shots.push({

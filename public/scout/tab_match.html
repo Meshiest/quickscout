@@ -28,7 +28,10 @@
     </article>
   </section>
   <section>
-    <img src='halffield.png' style='width: 100px; height: auto;' />
+    <img ng-src='halffield{{(flipField?"2":"")}}.png' ng-click='toggleField()' style='width: 100px; height: 100px; display: inline-block;'  />
+    <div style='width: 70px; display: inline-block; vertical-align: top;'>
+      Click to Rotate
+    </div>
   </section>
 </div>
 
@@ -43,6 +46,10 @@
 
     <input type='checkbox' ng-model='scout.auto.spy' id='autospy'/>
     <label for='autospy'>Spy</label><br/>
+
+    <input type='checkbox' ng-model='scout.auto.shot' id='autoShoot'/>
+    <label for='autoShoot'>Shot Ball</label><br/>
+
 
     <label for='defense'>Reached Defense</label><br/>
     <select ng-model='scout.auto.defense' id='defense'>
@@ -91,17 +98,17 @@
           {{scout.defenses[i]}}
         </td>
         <td>
-          <button ng-click='attempt(i, 1)'>&check;</button>
-          <button ng-click='attempt(i, 0)'>&cross;</button>
-          <button ng-click='attempt(i, -1)'>&#9760;</button>
-          <button ng-click='removeAttempt(i, scout.defenes[i].length-1)'>-</button>
+          <button class='iconButton' ng-click='attempt(i, 1)'>&check;</button>
+          <button class='iconButton' ng-click='attempt(i, 0)'>&cross;</button>
+          <button class='iconButton' ng-click='attempt(i, -1)'>&#9760;</button>
+          <button class='iconButton' ng-click='removeAttempt(i, scout.defenes[i].length-1)'>-</button>
         </td>
         <td style='text-align: center;'>
           {{scout.tele.defenses[i].length}}
         </td>
         <td>
           <span ng-repeat="(j, try) in lastItems(i, 3)">
-            <button ng-click='removeAttempt(i, j)'>
+            <button class='iconButton' ng-click='removeAttempt(i, j)'>
               {{try == '1' ? '&check;' : try == '-1' ? '&#9760;' : '&cross;'}}
             </button>
           </span>
@@ -134,7 +141,7 @@
         <tr ng-repeat='(i, shot) in scout.tele.shots'>
           <td>{{shot.goal}}</td>
           <td>{{shot.x}},{{shot.y}}</td>
-          <td><button ng-click='removeShot(i)'>&cross;</button></td>
+          <td><button class='iconButton' ng-click='removeShot(i)'>&cross;</button></td>
         </tr>
       </table>
     </div>
@@ -223,14 +230,16 @@
 var canvas = $('#fieldcanvas')
 var ctx = canvas[0].getContext('2d')
 ctx.canvas.width = ctx.canvas.height = 200
-var img = $('#halffieldimg')[0]
 
 function renderTouch(event) {
+  var img = $('#halffield' + (canvas.scope().flipField ? '2' : '' ) + 'img')[0]
   ctx.drawImage(img, 0, 0, 200, 200);
 
+
   if(event) {
-    var x = (event.pageX-canvas.offset().left)
-    var y = (event.pageY-canvas.offset().top)
+    var zoom = $('body').css('zoom')
+    var x = event.offsetX / zoom 
+    var y = event.offsetY / zoom
     ctx.fillStyle='rgba(255, 255, 255, 0.3)'
     ctx.strokeStyle='#000'
     ctx.lineWidth=5
