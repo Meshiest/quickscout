@@ -184,6 +184,7 @@ CACHE:
 /stats/_shots.html
 /stats/_team.html
 /stats/_threeteams.html
+/stats/_averages.html
 
 FALLBACK:
 # Scouted Data
