@@ -31,6 +31,10 @@ app.config(function($routeProvider, $mdThemingProvider){
     templateUrl: 'stats/_teams.html',
     controller: 'OverviewCtrl'
   }).
+  when('/averages',{
+    templateUrl: 'stats/_averages.html',
+    controller: 'AveragesCtrl'
+  }).
   when('/team/:id', {
     templateUrl: 'stats/_team.html',
     controller: 'TeamCtrl'
@@ -71,6 +75,11 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
       title: 'Compare',
       icon: 'compare_arrows',
       path: '/compare'
+    },
+    {
+      title: 'Averages',
+      icon: 'reorder',
+      path: '/averages'
     },
     /*{ // to be re-implemented when the time comes
         title: 'Pit Scout',
@@ -210,9 +219,17 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
             if(!$scope.teams[teamNumber]) {
               $scope.teams[teamNumber] = emptyTeam()
             }
+            var side = team.station.substr(0, team.station.length-1)
             $scope.teams[teamNumber].totalMatches ++
 
-            var side = team.station.substr(0, team.station.length-1)
+            if(!$scope.teams[teamNumber].totalPoints) {
+              $scope.teams[teamNumber].totalPoints = 0
+              $scope.teams[teamNumber].totalMatches = 0
+            }
+
+            $scope.teams[teamNumber].totalPoints += match['score'+side+'Final']
+            $scope.teams[teamNumber].totalMatches ++
+
             match['picks'+side].forEach(function(def){
               $scope.teams[teamNumber].picks[def] ++
             })
@@ -251,6 +268,21 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
         }
       }
     })
+  }
+
+  $scope.getAvg = function(type, teamNum) {
+    var num = 0
+    if(!$scope.teams[teamNum] || !$scope.teams[teamNum].matches.length)
+      return 'n/a'
+    for(var i in $scope.teams[teamNum].matches) {
+      var match = $scope.teams[teamNum].matches[i]
+      for(var j in match.tele.shots) {
+        var shot = match.tele.shots[j]
+        if(shot.goal == type)
+          num ++
+      }
+    }
+    return Math.floor(num / $scope.teams[teamNum].matches.length * 10 + 0.5)/10
   }
 
 
@@ -429,21 +461,6 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
     lmiss: "#aaf"
   }
 
-  $scope.getAvg = function(type, teamNum) {
-    var num = 0
-    if(!$scope.teams[teamNum] || !$scope.teams[teamNum].matches.length)
-      return 'n/a'
-    for(var i in $scope.teams[teamNum].matches) {
-      var match = $scope.teams[teamNum].matches[i]
-      for(var j in match.tele.shots) {
-        var shot = match.tele.shots[j]
-        if(shot.goal == type)
-          num ++
-      }
-    }
-    return Math.floor(num / $scope.teams[teamNum].matches.length * 10 + 0.5)/10
-  }
-
   $scope.showShots = function(teamNum, timeout) {
     if(!teamNum) {
       $scope.selectedTeams.forEach($scope.showShots)
@@ -489,5 +506,51 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
   }
 
 });
+
+app.controller('AveragesCtrl', function($scope, $timeout){
+
+  $scope._teams = Object.keys($scope.teams).map(function(num){return $scope.teams[num]})
+  $scope.order = 'meta.teamNumber'
+  $scope.reverse = true
+  $scope.reverseOrder = {}
+  $scope.setOrder = function(order) {
+    if(order == $scope.order) {
+      $scope.reverse = !$scope.reverse
+      $scope.reverseOrder[order] = $scope.reverse
+    }
+    $scope.order = order
+  }
+
+
+  $scope.calcAverages = function(teamNum) {
+    var team = $scope.teams[teamNum]
+    var averages = {
+      high: $scope.getAvg('high', teamNum),
+      low: $scope.getAvg('low', teamNum),
+      breach: 0,
+      capture: 0,
+      defender: 0
+    }
+    var numMatches = team.matches.length
+
+    team.matches.forEach(function(match) {
+      if(match.other.breach)
+        averages.breach ++
+      if(match.other.capture)
+        averages.capture ++
+      if(match.other.defender)
+        averages.defender ++
+    })
+    averages.breach = Math.round(averages.breach/numMatches*100)/100
+    averages.capture = Math.round(averages.capture/numMatches*100)/100
+    averages.defender = Math.round(averages.defender/numMatches*100)/100
+
+    $scope.teams[teamNum].avg = averages
+
+  }
+
+  Object.keys($scope.teams).forEach($scope.calcAverages)
+
+})
 
 })();
