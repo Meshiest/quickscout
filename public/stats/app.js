@@ -524,6 +524,8 @@ app.controller('AveragesCtrl', function($scope, $timeout){
 
   $scope.calcAverages = function(teamNum) {
     var team = $scope.teams[teamNum]
+    team.teamNumber = parseInt(teamNum)
+    team.teamName = (team.meta ? team.meta.nameShort : team.pit.teamName) || '-'
     var averages = {
       high: $scope.getAvg('high', teamNum),
       low: $scope.getAvg('low', teamNum),

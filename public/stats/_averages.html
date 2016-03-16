@@ -12,8 +12,8 @@
 
     <table>
       <tr>
-        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("meta.teamNumber")'>#</th>
-        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("meta.nameShort")'>Name</th>
+        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("teamNumber")'>#</th>
+        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("teamName")'>Name</th>
         <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.high")'>High</th>
         <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.low")'>Low</th>
         <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.breach")'>Breach</th>
@@ -22,10 +22,10 @@
       </tr>
       <tr ng-repeat='team in _teams | orderBy:order:reverse'>
         <td align="center">
-          {{team.meta.teamNumber}}
+          {{team.teamNumber}}
         </td>
         <td>
-          {{team.meta.nameShort}}
+          {{team.teamName}}
         </td>
         <td align="center">
           {{team.avg.high}}
