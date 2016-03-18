@@ -413,9 +413,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   }
 
   $scope.sendData = function() {
-    if(!$scope.team.length)
-      return;
-
+    
     Object.keys($scope.scoutedMatches).forEach($scope.sendMatch)
 
     Object.keys($scope.scoutedTeams).forEach(function(team){
