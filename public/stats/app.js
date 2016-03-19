@@ -268,19 +268,32 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
     })
   }
 
-  $scope.getAvg = function(type, teamNum) {
+  $scope.getAvg = function(type, teamNum, useRatio) {
+
     var num = 0
+    var total = 0
+    var missType = !type.match(/miss/) ? type.charAt(0)+'miss' : ''
     if(!$scope.teams[teamNum] || !$scope.teams[teamNum].matches.length)
       return 'n/a'
+
     for(var i in $scope.teams[teamNum].matches) {
       var match = $scope.teams[teamNum].matches[i]
       for(var j in match.tele.shots) {
         var shot = match.tele.shots[j]
-        if(shot.goal == type)
+        if(shot.goal == type) {
           num ++
+          total ++
+        }
+        if(shot.goal == missType) {
+          total ++
+        }
       }
     }
-    return Math.floor(num / $scope.teams[teamNum].matches.length * 10 + 0.5)/10
+    var avg =  Math.floor(num / $scope.teams[teamNum].matches.length * 10 + 0.5)/10
+    var ratio = (Math.floor(num / total * 100)/100)
+    if(total == 0)
+      useRatio = false
+    return avg + (useRatio ? " ("+ratio+")" : 0)
   }
 
 
@@ -511,6 +524,7 @@ app.controller('AveragesCtrl', function($scope, $timeout){
   $scope.order = 'meta.teamNumber'
   $scope.reverse = true
   $scope.reverseOrder = {}
+
   $scope.setOrder = function(order) {
     if(order == $scope.order) {
       $scope.reverse = !$scope.reverse
@@ -526,7 +540,9 @@ app.controller('AveragesCtrl', function($scope, $timeout){
     team.teamName = (team.meta ? team.meta.nameShort : team.pit.teamName) || '-'
     var averages = {
       high: $scope.getAvg('high', teamNum),
+      highR: $scope.getAvg('high', teamNum, true),
       low: $scope.getAvg('low', teamNum),
+      lowR: $scope.getAvg('low', teamNum, true),
       breach: 0,
       capture: 0,
       defender: 0
@@ -541,6 +557,7 @@ app.controller('AveragesCtrl', function($scope, $timeout){
       if(match.other.defender)
         averages.defender ++
     })
+
     averages.breach = Math.round(averages.breach/numMatches*100)/100
     averages.capture = Math.round(averages.capture/numMatches*100)/100
     averages.defender = Math.round(averages.defender/numMatches*100)/100
