@@ -24,14 +24,14 @@
         <td align="center">
           {{team.teamNumber}}
         </td>
-        <td>
+        <td ng-click='setPath("/team/"+team.teamNumber)'>
           {{team.teamName}}
         </td>
         <td align="center">
-          {{team.avg.high}}
+          {{team.avg.highR}}
         </td>
         <td align="center">
-          {{team.avg.low}}
+          {{team.avg.lowR}}
         </td>
         <td align="center">
           {{team.avg.breach}}

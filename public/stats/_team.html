@@ -52,7 +52,7 @@
           <th>Match</th>
           <th>Teams &amp; Score</th>
         </tr>
-        <tr ng-repeat="match in tournament.matches | filter:teamNumber">
+        <tr ng-repeat="match in tournament.matches | filter:{Teams: {teamNumber: teamNumber}}">
           <td>{{match.description}}</td>
           <td>
             <table>
