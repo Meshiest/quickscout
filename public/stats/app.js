@@ -201,18 +201,16 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
         $scope.tournament.scores = data.MatchScores
         $scope.tournament.scores.forEach(function(score) {
           var match = $scope.match[score.matchLevel.substr(0, 4) + " " + score.matchNumber]
-          match.scoreRedFinal = score.Alliances[0].totalPoints
-          match.scoreBlueFinal = score.Alliances[1].totalPoints
-          match.picksRed = [
-            score.Alliances[0].position2,
-            score.Alliances[0].position4,
-            score.Alliances[0].position5
-          ].map(function(d){return $scope.scoreToData[d]})
-          match.picksBlue = [
-            score.Alliances[1].position2,
-            score.Alliances[1].position4,
-            score.Alliances[1].position5
-          ].map(function(d){return $scope.scoreToData[d]})
+          for(var i = 0; i < 2; i++) {
+            var alliance = score.Alliances[i].alliance
+            match['score'+alliance+'Final'] = score.Alliances[i].totalPoints
+            match['picks'+alliance] = [
+              score.Alliances[i].position2,
+              score.Alliances[i].position4,
+              score.Alliances[i].position5
+            ].map(function(d){return $scope.scoreToData[d]})
+            
+          }
 
           match.Teams.forEach(function(team){
             var teamNumber = team.teamNumber

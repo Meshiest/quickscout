@@ -407,7 +407,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
         $cookies.putObject('scoutedMatches', $scope.scoutedMatches)
       }).
       error(function(resp){
-        console.log("Error in sending "+match)
+        $scope.notify("Error in sending "+match)
       })
 
   }
@@ -436,7 +436,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
           $cookies.putObject('scoutedTeams', $scope.scoutedTeams)
         }).
         error(function(resp){
-          console.log("Error in sending "+team)
+          $scope.notify("Error in sending "+team)
         })
 
     })
