@@ -7,45 +7,52 @@
       </md-card-title-text>
     </md-card-title>
 
-    <md-content layout-padding>
 
+    <md-tabs layout-fill md-dynamic-height md-border-bottom md-stretch-tabs="always">
+      <md-tab label='Averages'>
+        <md-content layout-padding>
+          <table>
+            <tr>
+              <th style='padding: 0 1em 0 1em;' ng-click='setOrder("teamNumber")'>#</th>
+              <th style='padding: 0 1em 0 1em;' ng-click='setOrder("teamName")'>Name</th>
+              <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.high")'>High</th>
+              <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.low")'>Low</th>
+              <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.breach")'>Breach</th>
+              <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.capture")'>Capture</th>
+              <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.defender")'>Defender</th>
+            </tr>
+            <tr ng-repeat='team in _teams | orderBy:order:reverse'>
+              <td align="center">
+                {{team.teamNumber}}
+              </td>
+              <td ng-click='setPath("/team/"+team.teamNumber)'>
+                {{team.teamName}}
+              </td>
+              <td align="center">
+                {{team.avg.highR}}
+              </td>
+              <td align="center">
+                {{team.avg.lowR}}
+              </td>
+              <td align="center">
+                {{team.avg.breach}}
+              </td>
+              <td align="center">
+                {{team.avg.capture}}
+              </td>
+              <td align="center">
+                {{team.avg.defender}}
+              </td>
+            </tr>
+          </table>
+        </md-content>
+      </md-tab>
 
-    <table>
-      <tr>
-        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("teamNumber")'>#</th>
-        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("teamName")'>Name</th>
-        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.high")'>High</th>
-        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.low")'>Low</th>
-        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.breach")'>Breach</th>
-        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.capture")'>Capture</th>
-        <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.defender")'>Defender</th>
-      </tr>
-      <tr ng-repeat='team in _teams | orderBy:order:reverse'>
-        <td align="center">
-          {{team.teamNumber}}
-        </td>
-        <td ng-click='setPath("/team/"+team.teamNumber)'>
-          {{team.teamName}}
-        </td>
-        <td align="center">
-          {{team.avg.highR}}
-        </td>
-        <td align="center">
-          {{team.avg.lowR}}
-        </td>
-        <td align="center">
-          {{team.avg.breach}}
-        </td>
-        <td align="center">
-          {{team.avg.capture}}
-        </td>
-        <td align="center">
-          {{team.avg.defender}}
-        </td>
-      </tr>
-    </table>
+      <md-tab label='Poor Man Scouting'>
+        lol
+      </md-tab>
+    </md-tabs>
 
-    </md-content>
   </md-card>
 
 </section>
