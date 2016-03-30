@@ -122,6 +122,7 @@ app.controller('AppCtrl', function($mdSidenav, $scope, $location, $http, $cookie
   }
 
   $scope.setPath = function(path) {
+      $mdSidenav('left').close();
       $location.path(path)
   }
 
@@ -533,6 +534,16 @@ app.controller('AveragesCtrl', function($scope, $timeout){
     $scope.order = order
   }
 
+  function itemFromPath(obj, path) {
+    if(path.length == 0)
+      return obj
+    return itemFromPath(obj[path[0]],path.slice(1))
+  }
+
+  var search = {
+    'breach': ['other','breach'],
+    'capture': ['other','capture'],
+  }
 
   $scope.calcAverages = function(teamNum) {
     var team = $scope.teams[teamNum]
@@ -543,24 +554,28 @@ app.controller('AveragesCtrl', function($scope, $timeout){
       highR: $scope.getAvg('high', teamNum, true),
       low: $scope.getAvg('low', teamNum),
       lowR: $scope.getAvg('low', teamNum, true),
-      breach: 0,
-      capture: 0,
-      defender: 0
     }
+
     var numMatches = team.matches.length
+    for(var k in search) {
+      averages[k] = 0
+    }
+
 
     team.matches.forEach(function(match) {
-      if(match.other.breach)
-        averages.breach ++
-      if(match.other.capture)
-        averages.capture ++
-      if(match.other.defender)
-        averages.defender ++
+      for(var k in search) {
+        var val = itemFromPath(match, search[k])
+        var type = typeof val
+        if(type == 'boolean' && val)
+          averages[k] ++
+        else if(type == 'number')
+          averages[k] += val
+      }
     })
 
-    averages.breach = Math.round(averages.breach/numMatches*100)/100
-    averages.capture = Math.round(averages.capture/numMatches*100)/100
-    averages.defender = Math.round(averages.defender/numMatches*100)/100
+    for(var k in search) {
+      averages[k] = Math.round(averages[k]/numMatches*100)/100
+    }
 
     $scope.teams[teamNum].avg = averages
 
