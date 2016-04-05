@@ -44,31 +44,26 @@
     <input type='checkbox' ng-model='scout.auto.ball' id='startball'/>
     <label for='startball'>Starts with Ball</label><br/>
 
-    <input type='checkbox' ng-model='scout.auto.spy' id='autospy'/>
-    <label for='autospy'>Spy</label><br/>
+    <input type='checkbox' ng-model='scout.auto.drop' id='dropball'/>
+    <label for='dropball'>Drops Ball</label><br/>
 
-    <input type='checkbox' ng-model='scout.auto.shot' id='autoShoot'/>
-    <label for='autoShoot'>Shot Ball</label><br/>
+    <input type='checkbox' ng-model='scout.auto.low' id='autoShootL'/>
+    <label for='autoShootL'>Low Goal</label><br/>
+
+    <input type='checkbox' ng-model='scout.auto.high' id='autoShootH'/>
+    <label for='autoShootH'>High Goal</label><br/>
+
+    <input type='checkbox' ng-model='scout.auto.hmiss' id='autoShootM'/>
+    <label for='autoShootM'>High Miss</label><br/>
 
     <input type='checkbox' ng-model='scout.auto.fail' id='autofail'/>
     <label for='autofail'>Program Failed</label><br/>
 
-    <label for='defense'>Reached Defense</label><br/>
-    <select ng-model='scout.auto.defense' id='defense'>
-      <option value='false' selected="selected">None</option>
-      <option value='port'>Portcullis</option>
-      <option value='cheval'>Cheval de Frise</option>
-      <option value='ramp'>Ramparts</option>
-      <option value='moat'>Moat</option>
-      <option value='sally'>Sally Port</option>
-      <option value='draw'>Draw Bridge</option>
-      <option value='rock'>Rock Wall</option>
-      <option value='rough'>Rough Terrain</option>
-      <option value='low'>Low Bar</option>
-    </select><br/>
+    <input type='checkbox' ng-model='scout.auto.crossed' id='madedefense'/>
+    <label for='madedefense'>Crossed Defense</label><br/>
 
-    <input type='checkbox' ng-model='scout.auto.madedefense' id='madedefense'/>
-    <label for='madedefense'>Hit Defense</label><br/>
+    <input type='checkbox' ng-model='scout.auto.outerworks' id='outerworks'/>
+    <label for='outerworks'>Reached Outerworks</label><br/>
 
   </section>
   <textarea style="width: 100%; height: 100%; box-sizing: border-box;" ng-model='scout.auto.comments' placeholder='Auto Comments'></textarea>
@@ -134,10 +129,9 @@
   </section>
   <section style='display: inline-block; float: right;'>
     <div style='text-align: center; '>
-      <button ng-click="addShot('high')">Hi</button>
-      <button ng-click="addShot('low')">Lo</button>
+      <button ng-click="addShot('high')">High</button>
+      <button ng-click="addShot('low')">Low</button>
       <button ng-click="addShot('hmiss')">HMiss</button>
-      <button ng-click="addShot('lmiss')">LMiss</button>
     </div>
     Shots
     <div style='height: 150px; overflow-y: auto; overflow-x: hidden; background: #fff;'>
@@ -159,29 +153,20 @@
 
 <div class='scoutdivider'>
   <section>
-    <input type='checkbox' ng-model='scout.ball.secret' id='secretball'/>
-    <label for='secretball'>Secret</label><br/>
+    <input type='number' ng-model='scout.ball.getball' id='pickupball' min="0" style="width:3em"/>
+    <button onclick="inc('#pickupball')">+</button>
+    <button onclick="dec('#pickupball')">-</button>
+    <label for='pickupball'>Get Ball</label><br/>
 
-    <input type='checkbox' ng-model='scout.ball.courtyard' id='courtyardball'/>
-    <label for='courtyardball'>Courtyard</label><br/>
+    <input type='number' ng-model='scout.ball.carry' id='carryball' min="0" style="width:3em"/>
+    <button onclick="inc('#carryball')">+</button>
+    <button onclick="dec('#carryball')">-</button>
+    <label for='carryball'>Carry Ball to Courtyard</label><br/>
 
-    <input type='checkbox' ng-model='scout.ball.neutral' id='neutralball'/>
-    <label for='neutralball'>Neutral</label><br/>
-
-    <input type='checkbox' ng-model='scout.ball.steal' id='stealball'/>
-    <label for='stealball'>Steal</label><br/>
-
-    <input type='checkbox' ng-model='scout.ball.block' id='blockball'/>
-    <label for='blockball'>Can Block</label><br/>
-
-    <input type='checkbox' ng-model='scout.ball.push' id='pushball'/>
-    <label for='pushball'>Can Push</label><br/>
-
-    <input type='checkbox' ng-model='scout.ball.pickup' id='pickupball'/>
-    <label for='pickupball'>Can Pickup</label><br/>
-
-    <input type='checkbox' ng-model='scout.ball.fast' id='fastball'/>
-    <label for='fastball'>Fast</label><br/>
+    <input type='number' ng-model='scout.ball.drop' id='dropball2' min="0" style="width:3em"/>
+    <button onclick="inc('#dropball2')">+</button>
+    <button onclick="dec('#dropball2')">-</button>
+    <label for='dropball2'>Drop Ball</label><br/>
 
   </section>
 </div>
@@ -194,6 +179,28 @@
 
 <div class='scoutdivider'>
   <section>
+
+    <input type='checkbox' ng-model='scout.other.challenge' id='challenge'/>
+    <label for='challenge'>Challenged</label><br/>
+
+
+    <input type='checkbox' ng-model='scout.other.scalelift' id='scalelift'/>
+    <label for='scalelift'>Scaled</label><br/>
+
+    <input type='checkbox' ng-model='scout.other.scaleliftfail' id='scaleliftfail'/>
+    <label for='scaleliftfail'>Failed Scaling</label><br/>
+
+    <input type='checkbox' ng-model='scout.other.batterroll' id='batterroll'/>
+    <label for='batterroll'>Rolled Off Batter</label><br/>
+    
+    <hr/>
+
+    <input type='checkbox' ng-model='scout.other.foul' id='penaltyother'/>
+    <label for='penaltyother'>Foul</label><br/>
+
+    <input type='checkbox' ng-model='scout.other.tecfoul' id='penaltyother2'/>
+    <label for='penaltyother2'>Technical Foul</label><br/>
+
     <input type='checkbox' ng-model='scout.other.deadbot' id='deadbot'/>
     <label for='deadbot'>Dead Bot/Dies</label><br/>
 
@@ -203,14 +210,7 @@
     <input type='checkbox' ng-model='scout.other.noshow' id='noshow'/>
     <label for='noshow'>No Show</label><br/>
 
-    <input type='checkbox' ng-model='scout.other.penalty' id='penaltyother'/>
-    <label for='penaltyother'>Penalty</label><br/>
-
-    <input type='checkbox' ng-model='scout.other.breach' id='breachother'/>
-    <label for='breachother'>Breach</label><br/>
-
-    <input type='checkbox' ng-model='scout.other.capture' id='captureother'/>
-    <label for='captureother'>Capture</label><br/>
+    <hr/>
 
     <input type='checkbox' ng-model='scout.other.defend' id='defendother'/>
     <label for='defendother'>Was Defended Against</label><br/>
@@ -219,29 +219,18 @@
     <input type='checkbox' ng-model='scout.other.defender' id='defenderother'/>
     <label for='defenderother'>Was a Defender</label><br/>
 
+    <hr/>
+
     <input type='checkbox' ng-model='scout.other.helpover' id='helpover'/>
     <label for='helpover'>Helped Robot Over Defense</label><br/>
+    
+    <input type='checkbox' ng-model='scout.other.breach' id='breachother'/>
+    <label for='breachother'>Breach</label><br/>
+
+    <input type='checkbox' ng-model='scout.other.capture' id='captureother'/>
+    <label for='captureother'>Capture</label><br/>
 
 
-
-    End Location<br/>
-    <input type='radio' ng-model='scout.other.scalepos' value='left' id='scaleleft'/>
-    <label for='scaleleft'>Left</label><br/>
-    <input type='radio' ng-model='scout.other.scalepos' value='center' id='scalecenter'/>
-    <label for='scalecenter'>Center</label><br/>
-    <input type='radio' ng-model='scout.other.scalepos' value='right' id='scaleright'/>
-    <label for='scaleright'>Right</label><br/>
-    <input type='radio' ng-model='scout.other.scalepos' value='false' id='scalenone'/>
-    <label for='scalenone'>None</label><br/>
-
-    <input type='checkbox' ng-model='scout.other.scalelift' id='scalelift'/>
-    <label for='scalelift'>Lifted</label><br/>
-
-    <input type='checkbox' ng-model='scout.other.scaleliftfail' id='scaleliftfail'/>
-    <label for='scaleliftfail'>Failed Lifting</label><br/>
-
-    <input type='checkbox' ng-model='scout.other.batterroll' id='batterroll'/>
-    <label for='batterroll'>Rolled Off Batter</label><br/>
 
     
   </section>
@@ -251,6 +240,20 @@
 </div>
 
 <script>
+
+// increase a numeric value by 1
+function inc(selector) {
+  var elem = $(selector)
+  elem.val(parseInt(elem.val() || 0)+1)
+}
+
+
+// decrease a numeric value by 1
+function dec(selector) {
+  var elem = $(selector)
+  elem.val(Math.max(parseInt(elem.val())-1,0))
+}
+
 var canvas = $('#fieldcanvas')
 var ctx = canvas[0].getContext('2d')
 ctx.canvas.width = ctx.canvas.height = 200

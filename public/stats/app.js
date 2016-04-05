@@ -462,9 +462,9 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
   }
 
   $scope.showhigh = true
-  $scope.showlow = false
+  $scope.showlow = true
   $scope.showhmiss = true
-  $scope.showlmiss = false
+  $scope.showlmiss = true
 
   $scope.colors = {
     high: "#afa",
@@ -521,11 +521,14 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
 
 app.controller('AveragesCtrl', function($scope, $timeout){
 
+  // an array of teams rather than an object of teams
   $scope._teams = Object.keys($scope.teams).map(function(num){return $scope.teams[num]})
+  // default order by team number
   $scope.order = 'meta.teamNumber'
   $scope.reverse = true
   $scope.reverseOrder = {}
 
+  // sets the order if it's a different order, otherwise reverses the current order
   $scope.setOrder = function(order) {
     if(order == $scope.order) {
       $scope.reverse = !$scope.reverse
@@ -534,12 +537,14 @@ app.controller('AveragesCtrl', function($scope, $timeout){
     $scope.order = order
   }
 
+  // recursive function for getting an attribute from a nested object
   function itemFromPath(obj, path) {
     if(path.length == 0)
       return obj
     return itemFromPath(obj[path[0]],path.slice(1))
   }
 
+  // search paths (['tele','shot'] == match.tele.shot)
   var search = {
     'breach': ['other','breach'],
     'capture': ['other','capture'],
@@ -547,21 +552,29 @@ app.controller('AveragesCtrl', function($scope, $timeout){
 
   $scope.calcAverages = function(teamNum) {
     var team = $scope.teams[teamNum]
+
     team.teamNumber = parseInt(teamNum)
     team.teamName = (team.meta ? team.meta.nameShort : team.pit.teamName) || '-'
+
+    // create an object to hold averages
     var averages = {
       high: $scope.getAvg('high', teamNum),
+      hmiss: $scope.getAvg('hmiss', teamNum),
       highR: $scope.getAvg('high', teamNum, true),
       low: $scope.getAvg('low', teamNum),
+      lmiss: $scope.getAvg('lmiss', teamNum),
       lowR: $scope.getAvg('low', teamNum, true),
+      offensive: 0,
+      defensive: 0,
     }
 
     var numMatches = team.matches.length
+    // assign default values
     for(var k in search) {
       averages[k] = 0
     }
 
-
+    // create totals from each searched item on each match
     team.matches.forEach(function(match) {
       for(var k in search) {
         var val = itemFromPath(match, search[k])
@@ -573,9 +586,18 @@ app.controller('AveragesCtrl', function($scope, $timeout){
       }
     })
 
+    // round and calculate averages
     for(var k in search) {
       averages[k] = Math.round(averages[k]/numMatches*100)/100
     }
+
+    // weighted averages
+    averages.defensive = averages.breach * 2 + averages.capture
+    averages.offensive = averages.high * 3 - averages.hmiss * 0.5 + averages.low * 1 - averages.lmiss * 0.1
+
+    // round weighted averages
+    averages.defensive = Math.round(averages.defensive*100)/100
+    averages.offensive = Math.round(averages.offensive*100)/100
 
     $scope.teams[teamNum].avg = averages
 
