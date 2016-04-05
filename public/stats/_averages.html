@@ -74,7 +74,7 @@
               <td ng-click='setPath("/team/"+team.teamNumber)'>
                 {{team.teamName}}
               </td>
-              <td align="center" ng-click='select("effective",team)' ng-class="{selected:selection.effective == team}">
+              <td align="center" ng-click='select("effective",team)' ng-class="{selected:selection.effective == team && isFriday}">
                 {{team.avg.effective}}
               </td>
               <td align="center" ng-hide='isFriday'>

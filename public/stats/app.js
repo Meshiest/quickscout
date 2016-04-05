@@ -526,6 +526,7 @@ app.controller('AveragesCtrl', function($scope, $timeout){
   // default order by team number
   $scope.order = 'meta.teamNumber'
   $scope.reverse = true
+  $scope.isFriday = false
   $scope.reverseOrder = {}
 
   // sets the order if it's a different order, otherwise reverses the current order
@@ -554,6 +555,9 @@ app.controller('AveragesCtrl', function($scope, $timeout){
 
   // checks if the team is in the selection
   $scope.isSelected = function(team) {
+    if(!$scope.isFriday)
+      return false
+    
     for(var k in $scope.selection) {
       if($scope.selection[k] == team)
         return true
