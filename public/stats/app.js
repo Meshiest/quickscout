@@ -455,7 +455,7 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
 
     }
     
-    if(!opportunitNies)
+    if(!opportunities)
       return "n/a"
 
     return Math.floor(attempts / opportunities * 100) + "%"
