@@ -139,7 +139,12 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
   $scope.matchBackup = {}
   $scope.$watch('scout', function(scout) {
-    $scope.matchBackup['scout_'+$scope.matches[$scope.currMatch][0]] = scout
+    var num = $scope.currMatch
+
+    scout.match = $scope.matches[num][0]
+    scout.teamNumber = $scope.matches[num][1]
+
+    $scope.matchBackup['scout_'+$scope.matches[num][0]] = scout
   }, true)
 
   $scope.team = {}
@@ -187,11 +192,14 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
     num = Math.min($scope.matches.length-1, Math.max(0, num))
     $scope.currMatch = num;
     $scope.scout = $scope.getScout()
+
+    console.log('setting scout match and teamnumber',num,$scope.matches[num])
+    $scope.scout.match = $scope.matches[num][0]
+    $scope.scout.teamNumber = $scope.matches[num][1]
+
     $cookies.put('currMatch', num)
     if(!$scope.matches.length || !$scope.scout)
       return
-    $scope.scout.match = $scope.matches[num][0]
-    $scope.scout.teamNumber = $scope.matches[num][1]
 
     var list = $('#matchListDiv');
     var next = Math.max(0, num-2)
@@ -391,6 +399,8 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
 
     if(backup && !cookie) {
       params.data = backup
+
+
     }
     
     $http({

@@ -84,3 +84,10 @@ input[type='text'].team {
   border-width: 0px;
 }
 
+tr.selected {
+  background: #eee;
+}
+
+td.selected {
+  background: #ccc;
+}

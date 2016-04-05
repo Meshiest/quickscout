@@ -77,16 +77,19 @@ post '/match' do
   begin
     if params[:data]
       data = JSON.parse(params[:data])
+      match = data['match']
     else
       data = JSON.parse(cookies["scout_"+params[:match].to_s] || '')
+      match = params[:match].to_s
     end
-    open('public/data/'+data['match']+"_"+data['teamNumber'].to_s+".json",'w'){|f|
+    puts "DATA",data
+    open('public/data/'+match+"_"+data['teamNumber'].to_s+".json",'w'){|f|
       f << data.to_json
     }
     '{"msg":"Success"}'
     status 200
   rescue => e
-    puts e
+    puts e, $!.backtrace
     status 400
   end
 
