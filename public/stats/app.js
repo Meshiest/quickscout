@@ -455,7 +455,7 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
 
     }
     
-    if(!opportunities)
+    if(!opportunitNies)
       return "n/a"
 
     return Math.floor(attempts / opportunities * 100) + "%"
@@ -537,6 +537,30 @@ app.controller('AveragesCtrl', function($scope, $timeout){
     $scope.order = order
   }
 
+  $scope.selection = {}
+  $scope.combined = 0
+  $scope.select = function(pos, team) {
+    // set the current selected (effective/first/second)
+    $scope.selection[pos] = team
+
+    // combine the first second and third scores
+    $scope.combined = Math.floor(100*(
+      $scope.selection.effective.avg.effective+
+      $scope.selection.first.avg.firstround+
+      $scope.selection.second.avg.secondround
+    ))/100
+
+  }
+
+  // checks if the team is in the selection
+  $scope.isSelected = function(team) {
+    for(var k in $scope.selection) {
+      if($scope.selection[k] == team)
+        return true
+    }
+    return false
+  }
+
   // recursive function for getting an attribute from a nested object
   function itemFromPath(obj, path) {
     if(path.length == 0)
@@ -546,10 +570,29 @@ app.controller('AveragesCtrl', function($scope, $timeout){
 
   // search paths (['tele','shot'] == match.tele.shot)
   var search = {
-    'breach': ['other','breach'],
+    'a_outerworks': ['auto','outerworks'],
+    'a_crossed': ['auto','crossed'],
+    'a_ball': ['auto','ball'],
+    'a_drop': ['auto','drop'],
+    'a_low': ['auto','low'],
+    'a_high': ['auto','high'],
+    'a_hmiss': ['auto','hmiss'],
+
+    'getball': ['ball','getball'],
+    'carryball': ['ball','carry'],
+    'dropball': ['ball','drop'],
+
     'capture': ['other','capture'],
+    'breach': ['other','breach'],
+    'helpover': ['other','helpover'],
+    'defend': ['other','defend'],
+    'challenged': ['other','challenged'],
+    'scalelift': ['other','scalelift'],
+    'foul': ['other','foul'],
+    'tecfoul': ['other','tecfoul'],
   }
 
+  // goes through a team and finds its averages
   $scope.calcAverages = function(teamNum) {
     var team = $scope.teams[teamNum]
 
@@ -562,10 +605,13 @@ app.controller('AveragesCtrl', function($scope, $timeout){
       hmiss: $scope.getAvg('hmiss', teamNum),
       highR: $scope.getAvg('high', teamNum, true),
       low: $scope.getAvg('low', teamNum),
-      lmiss: $scope.getAvg('lmiss', teamNum),
-      lowR: $scope.getAvg('low', teamNum, true),
-      offensive: 0,
-      defensive: 0,
+      cross: 0,
+      effective: 0,
+      effectivetele: 0,
+      effectiveauto: 0,
+      effectiveend: 0,
+      firstround: 0,
+      secondfound: 0
     }
 
     var numMatches = team.matches.length
@@ -576,6 +622,13 @@ app.controller('AveragesCtrl', function($scope, $timeout){
 
     // create totals from each searched item on each match
     team.matches.forEach(function(match) {
+      for(var k in match.tele.defenses) {
+        var arr = match.tele.defenses[k]
+        for(var i in arr) {
+          if(arr[i] == 1)
+            averages.cross ++
+        }
+      }
       for(var k in search) {
         var val = itemFromPath(match, search[k])
         var type = typeof val
@@ -590,19 +643,123 @@ app.controller('AveragesCtrl', function($scope, $timeout){
     for(var k in search) {
       averages[k] = Math.round(averages[k]/numMatches*100)/100
     }
+    averages.cross = Math.round(averages.cross/numMatches*100)/100
+
 
     // weighted averages
-    averages.defensive = averages.breach * 2 + averages.capture
-    averages.offensive = averages.high * 3 - averages.hmiss * 0.5 + averages.low * 1 - averages.lmiss * 0.1
+    averages.effective = (
+      2 * averages.a_outerworks +
+      5 * averages.a_crossed +
+      0.5 * averages.a_ball +
+      -0.5 * averages.a_drop +
+      4 * averages.a_low +
+      9 * averages.a_high +
+      -6 * averages.a_hmiss +
+      5 * averages.cross +
+      3 * averages.helpover +
+      0.5 * averages.getball +
+      0.5 * averages.carryball +
+      -0.5 * averages.dropball +
+      1 * averages.low +
+      4 * averages.high +
+      -6 * averages.hmiss +
+      1 * averages.defend +
+      5 * averages.challenged +
+      15 * averages.scalelift +
+      -5 * averages.foul +
+      -10 * averages.tecfoul
+    )
+
+    averages.effectiveauto = (
+      2 * averages.a_outerworks +
+      5 * averages.a_crossed +
+      0.5 * averages.a_ball +
+      -0.5 * averages.a_drop +
+      4 * averages.a_low +
+      9 * averages.a_high +
+      -6 * averages.a_hmiss
+    )
+
+    averages.effectivetele = (
+      5 * averages.cross +
+      3 * averages.helpover +
+      0.5 * averages.getball +
+      0.5 * averages.carryball +
+      -0.5 * averages.dropball +
+      1 * averages.low +
+      4 * averages.high +
+      -6 * averages.hmiss +
+      1 * averages.defend
+    )
+
+    averages.effectiveend = (
+      5 * averages.challenged +
+      15 * averages.scalelift +
+      -5 * averages.foul +
+      -10 * averages.tecfoul
+    )
+
+    averages.firstround = (
+      2 * averages.a_outerworks +
+      10 * averages.a_crossed +
+      0.5 * averages.a_ball +
+      -0.5 * averages.a_drop +
+      4 * averages.a_low +
+      9 * averages.a_high +
+      -6 * averages.a_hmiss +
+      5 * averages.cross +
+      3 * averages.helpover +
+      0.5 * averages.getball +
+      0.5 * averages.carryball +
+      -0.5 * averages.dropball +
+      2 * averages.low +
+      4 * averages.high +
+      -6 * averages.hmiss +
+      1 * averages.defend +
+      5 * averages.challenged +
+      15 * averages.scalelift +
+      -5 * averages.foul +
+      -10 * averages.tecfoul
+    )
+
+    averages.secondround = (
+      2 * averages.a_outerworks +
+      15 * averages.a_crossed +
+      0.5 * averages.a_ball +
+      -0.5 * averages.a_drop +
+      4 * averages.a_low +
+      9 * averages.a_high +
+      -6 * averages.a_hmiss +
+      5 * averages.cross +
+      3 * averages.helpover +
+      0.5 * averages.getball +
+      0.5 * averages.carryball +
+      -0.5 * averages.dropball +
+      1 * averages.low +
+      0 * averages.high +
+      0 * averages.hmiss +
+      1 * averages.defend +
+      5 * averages.challenged +
+      15 * averages.scalelift +
+      -5 * averages.foul +
+      -10 * averages.tecfoul
+    )
+
 
     // round weighted averages
-    averages.defensive = Math.round(averages.defensive*100)/100
-    averages.offensive = Math.round(averages.offensive*100)/100
+    averages.effective = Math.round(averages.effective*100)/100
+    averages.effectiveauto = Math.round(averages.effectiveauto*100)/100
+    averages.effectivetele = Math.round(averages.effectivetele*100)/100
+    averages.effectiveend = Math.round(averages.effectiveend*100)/100
+    averages.firstround = Math.round(averages.firstround*100)/100
+    averages.secondround = Math.round(averages.secondround*100)/100
 
+    // assign our averages object to the team
     $scope.teams[teamNum].avg = averages
 
   }
 
+  // calculate all averages for each team
   Object.keys($scope.teams).forEach($scope.calcAverages)
 
 })
