@@ -569,7 +569,11 @@ app.controller('AveragesCtrl', function($scope, $timeout){
   function itemFromPath(obj, path) {
     if(path.length == 0)
       return obj
-    return itemFromPath(obj[path[0]],path.slice(1))
+    try {
+      return itemFromPath(obj[path[0]],path.slice(1))
+    } catch(e) {
+      return undefined
+    }
   }
 
   // search paths (['tele','shot'] == match.tele.shot)
