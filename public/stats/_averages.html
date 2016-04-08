@@ -49,6 +49,10 @@
           <md-checkbox ng-model='isFriday'>
             Friday Night
           </md-checkbox>
+          <md-checkbox ng-checked='deductPoints' ng-click='toggleDeduct()'>
+            Deduct Points
+          </md-checkbox>
+          
 
           <h3 ng-show='isFriday'>
             Combined Score: {{combined}}

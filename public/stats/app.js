@@ -529,6 +529,8 @@ app.controller('AveragesCtrl', function($scope, $timeout){
   $scope.isFriday = false
   $scope.reverseOrder = {}
 
+  $scope.deductPoints = true
+
   // sets the order if it's a different order, otherwise reverses the current order
   $scope.setOrder = function(order) {
     if(order == $scope.order) {
@@ -659,33 +661,33 @@ app.controller('AveragesCtrl', function($scope, $timeout){
       2 * averages.a_outerworks +
       5 * averages.a_crossed +
       0.5 * averages.a_ball +
-      -0.5 * averages.a_drop +
+      ($scope.deductPoints?-0.5 * averages.a_drop:0) +
       4 * averages.a_low +
       9 * averages.a_high +
-      -6 * averages.a_hmiss +
+      ($scope.deductPoints?-6 * averages.a_hmiss:0) +
       5 * averages.cross +
       3 * averages.helpover +
       0.5 * averages.getball +
       0.5 * averages.carryball +
-      -0.5 * averages.dropball +
+      ($scope.deductPoints?-0.5 * averages.dropball:0) +
       1 * averages.low +
       4 * averages.high +
-      -6 * averages.hmiss +
+      ($scope.deductPoints?-6 * averages.hmiss:0) +
       1 * averages.defend +
       5 * averages.challenged +
       15 * averages.scalelift +
-      -5 * averages.foul +
-      -10 * averages.tecfoul
+      ($scope.deductPoints?-5 * averages.foul:0) +
+      ($scope.deductPoints?-10 * averages.tecfoul:0)
     )
 
     averages.effectiveauto = (
       2 * averages.a_outerworks +
       5 * averages.a_crossed +
       0.5 * averages.a_ball +
-      -0.5 * averages.a_drop +
+      ($scope.deductPoints?-0.5 * averages.a_drop:0) +
       4 * averages.a_low +
       9 * averages.a_high +
-      -6 * averages.a_hmiss
+      ($scope.deductPoints?-6 * averages.a_hmiss:0)
     )
 
     averages.effectivetele = (
@@ -693,64 +695,64 @@ app.controller('AveragesCtrl', function($scope, $timeout){
       3 * averages.helpover +
       0.5 * averages.getball +
       0.5 * averages.carryball +
-      -0.5 * averages.dropball +
+      ($scope.deductPoints?-0.5 * averages.dropball:0) +
       1 * averages.low +
       4 * averages.high +
-      -6 * averages.hmiss +
+      ($scope.deductPoints?-6 * averages.hmiss:0) +
       1 * averages.defend
     )
 
     averages.effectiveend = (
       5 * averages.challenged +
       15 * averages.scalelift +
-      -5 * averages.foul +
-      -10 * averages.tecfoul
+      ($scope.deductPoints?-5 * averages.foul:0) +
+      ($scope.deductPoints?-10 * averages.tecfoul:0)
     )
 
     averages.firstround = (
       2 * averages.a_outerworks +
       10 * averages.a_crossed +
       0.5 * averages.a_ball +
-      -0.5 * averages.a_drop +
+      ($scope.deductPoints?-0.5 * averages.a_drop:0) +
       4 * averages.a_low +
       9 * averages.a_high +
-      -6 * averages.a_hmiss +
+      ($scope.deductPoints?-6 * averages.a_hmiss:0) +
       5 * averages.cross +
       3 * averages.helpover +
       0.5 * averages.getball +
       0.5 * averages.carryball +
-      -0.5 * averages.dropball +
+      ($scope.deductPoints?-0.5 * averages.dropball:0) +
       2 * averages.low +
       4 * averages.high +
-      -6 * averages.hmiss +
+      ($scope.deductPoints?-6 * averages.hmiss:0) +
       1 * averages.defend +
       5 * averages.challenged +
       15 * averages.scalelift +
-      -5 * averages.foul +
-      -10 * averages.tecfoul
+      ($scope.deductPoints?-5 * averages.foul:0) +
+      ($scope.deductPoints?-10 * averages.tecfoul:0)
     )
 
     averages.secondround = (
       2 * averages.a_outerworks +
       15 * averages.a_crossed +
       0.5 * averages.a_ball +
-      -0.5 * averages.a_drop +
+      ($scope.deductPoints?-0.5 * averages.a_drop:0) +
       4 * averages.a_low +
       9 * averages.a_high +
-      -6 * averages.a_hmiss +
+      ($scope.deductPoints?-6 * averages.a_hmiss:0) +
       5 * averages.cross +
       3 * averages.helpover +
       0.5 * averages.getball +
       0.5 * averages.carryball +
-      -0.5 * averages.dropball +
+      ($scope.deductPoints?-0.5 * averages.dropball:0) +
       1 * averages.low +
       0 * averages.high +
       0 * averages.hmiss +
       1 * averages.defend +
       5 * averages.challenged +
       15 * averages.scalelift +
-      -5 * averages.foul +
-      -10 * averages.tecfoul
+      ($scope.deductPoints?-5 * averages.foul:0) +
+      ($scope.deductPoints?-10 * averages.tecfoul:0)
     )
 
 
@@ -769,6 +771,11 @@ app.controller('AveragesCtrl', function($scope, $timeout){
 
   // calculate all averages for each team
   Object.keys($scope.teams).forEach($scope.calcAverages)
+
+  $scope.toggleDeduct = function() {
+    $scope.deductPoints = !$scope.deductPoints
+    Object.keys($scope.teams).forEach($scope.calcAverages)
+  }
 
 })
 
