@@ -523,6 +523,21 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   }
 
 
+  // increase a numeric value by 1
+  $scope.inc = function (type) {
+    if(!$scope.scout.ball[type])
+      $scope.scout.ball[type] = 0
+    $scope.scout.ball[type] += 1
+  }
+
+  // decrease a numeric value by 1
+  $scope.dec = function(type) {
+    if(!$scope.scout.ball[type])
+      $scope.scout.ball[type] = 0
+    $scope.scout.ball[type] -= 1
+  }
+
+
 
 });
 
