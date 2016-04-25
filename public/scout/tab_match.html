@@ -62,6 +62,19 @@
     <input type='checkbox' ng-model='scout.auto.crossed' id='madedefense'/>
     <label for='madedefense'>Crossed Defense</label><br/>
 
+    <select ng-model='scout.auto.defense'>
+      <option value='false' selected="selected">None</option>
+      <option value='port'>Portcullis</option>
+      <option value='cheval'>Cheval de Frise</option>
+      <option value='ramp'>Ramparts</option>
+      <option value='moat'>Moat</option>
+      <option value='sally'>Sally Port</option>
+      <option value='draw'>Draw Bridge</option>
+      <option value='rock'>Rock Wall</option>
+      <option value='rough'>Rough Terrain</option>
+      <option value='low'>Low Bar</option>
+    </select><br/>
+
     <input type='checkbox' ng-model='scout.auto.outerworks' id='outerworks'/>
     <label for='outerworks'>Reached Outerworks</label><br/>
 
@@ -150,22 +163,21 @@
 <hr/>
 
 <h3>Ball</h3>
-
 <div class='scoutdivider'>
   <section>
     <input type='number' ng-model='scout.ball.getball' id='pickupball' min="0" style="width:3em"/>
-    <button onclick="inc('#pickupball')">+</button>
-    <button onclick="dec('#pickupball')">-</button>
+    <button ng-click="inc('getball')">+</button>
+    <button ng-click="dec('getball')">-</button>
     <label for='pickupball'>Get Ball</label><br/>
 
     <input type='number' ng-model='scout.ball.carry' id='carryball' min="0" style="width:3em"/>
-    <button onclick="inc('#carryball')">+</button>
-    <button onclick="dec('#carryball')">-</button>
+    <button ng-click="inc('carry')">+</button>
+    <button ng-click="dec('carry')">-</button>
     <label for='carryball'>Carry Ball to Courtyard</label><br/>
 
     <input type='number' ng-model='scout.ball.drop' id='dropball2' min="0" style="width:3em"/>
-    <button onclick="inc('#dropball2')">+</button>
-    <button onclick="dec('#dropball2')">-</button>
+    <button ng-click="inc('drop')">+</button>
+    <button ng-click="dec('drop')">-</button>
     <label for='dropball2'>Drop Ball</label><br/>
 
   </section>
@@ -240,19 +252,6 @@
 </div>
 
 <script>
-
-// increase a numeric value by 1
-function inc(selector) {
-  var elem = $(selector)
-  elem.val(parseInt(elem.val() || 0)+1)
-}
-
-
-// decrease a numeric value by 1
-function dec(selector) {
-  var elem = $(selector)
-  elem.val(Math.max(parseInt(elem.val())-1,0))
-}
 
 var canvas = $('#fieldcanvas')
 var ctx = canvas[0].getContext('2d')

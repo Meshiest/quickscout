@@ -473,15 +473,45 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
     lmiss: "#aaf"
   }
 
+  $scope.renderMatchShots = function(ctx, match) {
+    for(var j = 0; j < match.tele.shots.length; j++) {
+      var shot = match.tele.shots[j]
+      if(!$scope['show'+shot.goal])
+        continue;
+      ctx.strokeStyle=$scope.colors[shot.goal]
+      if(shot.goal.endsWith("miss")) {
+        ctx.beginPath()
+        ctx.moveTo(shot.x*200-5,shot.y*200-5)
+        ctx.lineTo(shot.x*200+5,shot.y*200+5)
+        ctx.moveTo(shot.x*200+5,shot.y*200-5)
+        ctx.lineTo(shot.x*200-5,shot.y*200+5)
+        ctx.stroke()
+      } else {
+        ctx.beginPath()
+        ctx.arc(shot.x*200, shot.y*200, 5, 0, 6.29)
+        ctx.stroke()            
+      }
+
+    }
+  }
+
+  $scope.showMatchShots = function(match, id) {
+    setTimeout(function(){
+      var canvas = document.getElementById('fieldcanvas'+id)
+      var ctx = canvas.getContext('2d')
+      ctx.canvas.width = ctx.canvas.height = 200
+      var img = document.getElementById('halffieldimg')
+      ctx.drawImage(img, 0, 0, 200, 200);
+      ctx.lineWidth=3
+      $scope.renderMatchShots(ctx, match)
+    }, 500)
+  }
+
   $scope.showShots = function(teamNum, timeout) {
     if(!teamNum) {
       $scope.selectedTeams.forEach($scope.showShots)
       return;
     }
-
-    if(!$scope.teams[teamNum])
-      return 'n/a'
-
 
     setTimeout(function(){
       var canvas = document.getElementById('fieldcanvas'+teamNum)
@@ -493,26 +523,7 @@ app.controller('TeamCtrl', function($scope, $routeParams, $location){
       
       for(var i = 0; i < $scope.teams[teamNum].matches.length; i++) {
         var match = $scope.teams[teamNum].matches[i]
-        for(var j = 0; j < match.tele.shots.length; j++) {
-          var shot = match.tele.shots[j]
-          if(!$scope['show'+shot.goal])
-            continue;
-          ctx.strokeStyle=$scope.colors[shot.goal]
-          if(shot.goal.endsWith("miss")) {
-            ctx.beginPath()
-            ctx.moveTo(shot.x*200-5,shot.y*200-5)
-            ctx.lineTo(shot.x*200+5,shot.y*200+5)
-            ctx.moveTo(shot.x*200+5,shot.y*200-5)
-            ctx.lineTo(shot.x*200-5,shot.y*200+5)
-            ctx.stroke()
-            
-          } else {
-            ctx.beginPath()
-            ctx.arc(shot.x*200, shot.y*200, 5, 0, 6.29)
-            ctx.stroke()            
-          }
-
-        }
+        $scope.renderMatchShots(ctx, match)
       }
     }, (timeout ? 500 : 0))
   }
