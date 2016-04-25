@@ -17,6 +17,7 @@
               <th style='padding: 0 1em 0 1em;' ng-click='setOrder("teamName")'>Name</th>
               <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.high")'>High</th>
               <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.low")'>Low</th>
+              <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.cross")'>Defenses</th>
               <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.breach")'>Breach</th>
               <th style='padding: 0 1em 0 1em;' ng-click='setOrder("avg.capture")'>Capture</th>
             </tr>
@@ -32,6 +33,9 @@
               </td>
               <td align="center">
                 {{team.avg.low}}
+              </td>
+              <td align="center">
+                {{team.avg.cross}}
               </td>
               <td align="center">
                 {{team.avg.breach}}
