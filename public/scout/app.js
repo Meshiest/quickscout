@@ -94,7 +94,11 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
           break;
         }
 
-        var match = $scope.matches[$scope.currMatch][0]
+        var matches = $scope.matches[$scope.currMatch]
+        if(!matches || !matches.length)
+            return $scope.emptyMatchScout()
+
+        var match = matches[0]
         if($cookies.getObject("scout_"+match))
           console.log(match,'has cookie')
         else if($scope.matchBackup['scout_'+match])
@@ -117,6 +121,7 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope.currTab = $cookies.get('currTab') || 'pit'
   $scope.path = []
 
+  $scope.matches = []
   $scope.matches = $cookies.getObject('matches') || []
   $scope.scoutedMatches = $cookies.getObject('scoutedMatches') || {}
   Object.keys($cookies.getAll()).forEach(function(key) {
@@ -141,6 +146,9 @@ app.controller('AppCtrl', function($scope, $location, $http, $cookies, $timeout)
   $scope.$watch('scout', function(scout) {
     var num = $scope.currMatch
 
+    if(!$scope.matches[num])
+      return
+    
     scout.match = $scope.matches[num][0]
     scout.teamNumber = $scope.matches[num][1]
 
