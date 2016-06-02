@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html ng-app='app' <%= File.exists?("debug") ? '' : 'manifest="/stats.appcache"' %> >
+<html ng-app='app' manifest="/stats.appcache" >
   <head>
     <title>2468 Analytics</title>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
     <link href="angular-material.min.css" rel='stylesheet' type='text/css'>
-
+    <meta name="theme-color" content="#3f51b5">
     <link href="icons.css" rel="stylesheet" type='text/css'>
     
-    <link href='stats/style.css' rel='stylesheet' type='text/css' />
+    <link href='/stats/style.css' rel='stylesheet' type='text/css' />
   </head>
 
   <body ng-controller="AppCtrl">
@@ -52,6 +54,8 @@
         <md-content ng-view class='bg'></md-content>
       </div>
     </div>
+
+    <img id='halffieldimg' src='halffield.png' style='display: none; position: fixed; top: -9999; left: -9999;' />
 
   </body>
 </html>

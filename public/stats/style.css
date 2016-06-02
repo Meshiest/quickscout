@@ -1,5 +1,5 @@
 
-body, html, md-content.bg{
+body, html, md-content.bg {
   background-color: #eee;
 }
 
@@ -11,6 +11,18 @@ td.label {
 
 .autocap {
   text-transform: capitalize;
+}
+
+.center {
+  text-align: center;
+}
+
+md-content.matches {
+  overflow-x: auto;
+}
+
+.matches table {
+  display: inline-block;
 }
 
 span.team {
@@ -72,3 +84,10 @@ input[type='text'].team {
   border-width: 0px;
 }
 
+tr.selected {
+  background: #eee;
+}
+
+td.selected {
+  background: #ccc;
+}
